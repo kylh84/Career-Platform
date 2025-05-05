@@ -54,6 +54,8 @@ const ScrollToTop: React.FC = () => {
 const App: React.FC = () => {
   // Thêm state để theo dõi việc ứng dụng đã sẵn sàng chưa
   const [isAppReady, setIsAppReady] = useState(false);
+  const [showLoading, setShowLoading] = useState(true);
+  const [isFading, setIsFading] = useState(false);
 
   useEffect(() => {
     // Đảm bảo ứng dụng có thời gian để khởi tạo
@@ -75,8 +77,8 @@ const App: React.FC = () => {
         const token = localStorage.getItem('token');
         console.log('App initialized, token exists:', !!token);
 
-        // Thêm 200ms delay để đảm bảo các component được render đúng
-        await new Promise((resolve) => setTimeout(resolve, 200));
+        // Thêm 1000ms delay để đảm bảo các component được render đúng
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (error) {
         console.error('Error initializing app:', error);
       } finally {
@@ -87,10 +89,17 @@ const App: React.FC = () => {
     prepareApp();
   }, []);
 
+  useEffect(() => {
+    if (isAppReady) {
+      setIsFading(true);
+      setTimeout(() => setShowLoading(false), 4000); // 400ms fade out
+    }
+  }, [isAppReady]);
+
   // Hiển thị loading screen khi ứng dụng chưa có dữ liệu
-  if (!isAppReady) {
+  if (showLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className={`min-h-screen flex items-center justify-center bg-gray-50 transition-opacity duration-400 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto"></div>
           <p className="mt-3 text-gray-700">Đang tải ứng dụng...</p>
