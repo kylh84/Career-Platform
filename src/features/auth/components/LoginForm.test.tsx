@@ -37,7 +37,7 @@ describe('LoginForm', () => {
     // Check for form elements
     expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: /remember me/i })).toBeInTheDocument();
   });
 
@@ -45,7 +45,7 @@ describe('LoginForm', () => {
     render(<LoginForm />, { wrapper: Wrapper });
 
     // Submit empty form
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
 
     // Check for validation messages
     await waitFor(() => {

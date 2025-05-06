@@ -30,7 +30,7 @@ describe('useI18n', () => {
     });
 
     // Test English translation
-    expect(result.current.t('auth.login.title')).toBe('Sign In');
+    expect(result.current.t('auth.login.title')).toBe('Login');
     expect(result.current.t('auth.login.username')).toBe('Username');
   });
 

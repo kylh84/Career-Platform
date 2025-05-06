@@ -63,7 +63,7 @@ describe('I18nContext', () => {
     );
 
     // Check English translation
-    expect(screen.getByTestId('translated-text')).toHaveTextContent('Sign In');
+    expect(screen.getByTestId('translated-text')).toHaveTextContent('Login');
 
     // Switch to Vietnamese
     screen.getByText('Switch to Vietnamese').click();

@@ -52,12 +52,6 @@ const LoginPage: React.FC = () => {
       {/* Main content  */}
       <div className="flex-grow flex items-center justify-center">
         <div className="w-full max-w-md mx-auto px-4">
-          {/* Welcome message - Now above the login form */}
-          <div className="text-center mb-6">
-            <h1 className="text-4xl font-bold text-gray-900 mb-3">{t('auth.login.welcomeBack')}</h1>
-            <p className="text-lg text-gray-600">{t('auth.login.welcomeMessage')}</p>
-          </div>
-
           {/* Login form */}
           <div className="bg-white rounded-xl shadow-lg overflow-hidden w-full">
             <LoginForm />

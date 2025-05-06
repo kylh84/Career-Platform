@@ -35,7 +35,7 @@ const AppRoutes: React.FC = () => {
       <Routes>
         {/* --- Public Routes --- */}
         <Route path="/home" element={<Home />} />
-        <Route path="/login" element={isAuthenticated ? <Navigate to="/home" replace /> : <LoginPage />} />
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
         <Route path="/" element={<Navigate to="/home" replace />} />
 
         {/* --- Protected Routes --- */}

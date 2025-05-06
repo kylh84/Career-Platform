@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiUser, FiCode, FiMap, FiTarget, FiSettings } from 'react-icons/fi';
+import diagramIcon from '../assets/icons/diagram.png';
+import identityCardIcon from '../assets/icons/identity-card.png';
+import programIcon from '../assets/icons/program.png';
+import targetIcon from '../assets/icons/target.png';
 
 const sidebarMenu = [
   { icon: <FiUser size={24} />, label: 'CV' },
@@ -12,24 +16,24 @@ const sidebarMenu = [
 
 const features = [
   {
-    icon: '👤',
+    icon: identityCardIcon,
     title: 'CV Optimization',
-    desc: 'Improve your resume with AI-powered suggestions.',
+    desc: 'Improve your resume with AI-driven insights',
   },
   {
-    icon: '💻',
+    icon: programIcon,
     title: 'Code Review',
-    desc: 'Get feedback and insights on your source code',
+    desc: 'Get feedback on your code from analysis',
   },
   {
-    icon: '🛣️',
+    icon: diagramIcon,
     title: 'Learning Roadmap',
-    desc: 'Receive a personalized path for skill development',
+    desc: 'Follow a tailored path to master new skills',
   },
   {
-    icon: '🎯',
+    icon: targetIcon,
     title: 'Career Guidance',
-    desc: 'Discover career paths that align with your profile',
+    desc: 'Receive advice on your IT career development',
   },
 ];
 
@@ -47,7 +51,9 @@ const Dashboard: React.FC = () => {
     <div className="min-h-screen flex bg-gray-50">
       {/* Sidebar */}
       <aside className="w-64 bg-blue-900 text-white flex flex-col py-8 px-4 min-h-screen">
-        <div className="text-2xl font-bold mb-10 pl-2">Career Platform</div>
+        <div className="text-2xl font-bold mb-10 pl-2 text-center cursor-pointer" onClick={() => navigate('/dashboard')}>
+          Career Platform
+        </div>
         <nav className="flex-1 space-y-2">
           {sidebarMenu.map((item) => (
             <button
@@ -63,14 +69,14 @@ const Dashboard: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-10">
+      <main className="flex-1 p-10   ">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {features.map((f) => (
-            <div key={f.title} className="bg-white rounded-xl shadow p-8 flex flex-col items-center text-center border border-gray-100">
-              <div className="text-4xl mb-3">{f.icon}</div>
-              <div className="font-semibold text-xl mb-2">{f.title}</div>
-              <div className="text-gray-600 text-base">{f.desc}</div>
+        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 items-center justify-center mx-auto p-10 ">
+          {features.map((feature) => (
+            <div key={feature.title} className="bg-white cursor-pointer rounded-2xl shadow-lg p-2 flex flex-col  border border-gray-100 min-h-[240px]">
+              <img src={feature.icon} alt={feature.title} className="w-20 h-20 ml-4 mx-auto mb-6" />
+              <div className="font-bold ml-4 text-xl mb-2">{feature.title}</div>
+              <div className="text-gray-600 ml-4 text-base">{feature.desc}</div>
             </div>
           ))}
         </div>

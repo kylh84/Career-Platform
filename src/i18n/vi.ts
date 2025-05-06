@@ -31,7 +31,7 @@ export const vi: TranslationDictionary = {
   auth: {
     login: {
       title: 'Đăng nhập',
-      subtitle: 'Truy cập vào hệ thống',
+      subtitle: 'Chào mừng trở lại!',
       username: 'Tên đăng nhập',
       password: 'Mật khẩu',
       remember: 'Ghi nhớ đăng nhập',
@@ -90,6 +90,37 @@ export const vi: TranslationDictionary = {
       email: 'Email',
       noInfo: 'Không có thông tin người dùng',
     },
+  },
+  home: {
+    heroTitle: 'Thăng tiến sự nghiệp\ncông nghệ của bạn',
+    heroDesc: 'Tận dụng AI để tối ưu CV, đánh giá mã nguồn, nhận lộ trình học tập cá nhân hóa và tư vấn định hướng nghề nghiệp.',
+    getStarted: 'Bắt đầu miễn phí',
+    features: {
+      cv: {
+        title: 'Tối ưu CV',
+        desc: 'Cải thiện CV của bạn với gợi ý từ AI',
+      },
+      code: {
+        title: 'Đánh giá mã nguồn',
+        desc: 'Nhận phản hồi về code từ hệ thống phân tích',
+      },
+      roadmap: {
+        title: 'Lộ trình học tập',
+        desc: 'Theo sát lộ trình để làm chủ kỹ năng mới',
+      },
+      career: {
+        title: 'Định hướng nghề nghiệp',
+        desc: 'Nhận tư vấn phát triển sự nghiệp IT',
+      },
+    },
+  },
+  header: {
+    home: 'Trang chủ',
+    features: 'Tính năng',
+    pricing: 'Bảng giá',
+    login: 'Đăng nhập',
+    logout: 'Đăng xuất',
+    hello: 'Xin chào, {{name}}',
   },
   languageSwitcher: {
     title: 'Ngôn ngữ',

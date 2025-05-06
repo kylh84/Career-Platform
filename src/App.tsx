@@ -92,7 +92,7 @@ const App: React.FC = () => {
   useEffect(() => {
     if (isAppReady) {
       setIsFading(true);
-      setTimeout(() => setShowLoading(false), 4000); // 400ms fade out
+      setTimeout(() => setShowLoading(false), 400); // 400ms fade out
     }
   }, [isAppReady]);
 
