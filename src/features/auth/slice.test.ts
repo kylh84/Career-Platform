@@ -32,7 +32,7 @@ describe('auth slice', () => {
 
   describe('login thunk', () => {
     const mockCredentials: LoginCredentials = {
-      username: 'testuser',
+      email: 'test@example.com',
       password: 'testpass',
     };
 

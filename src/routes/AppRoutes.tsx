@@ -1,6 +1,7 @@
 import React, { useEffect, Suspense } from 'react';
 import { Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import LoginPage from '../features/auth/pages/LoginPage';
+import SignUpForm from '../features/auth/components/SignUpForm';
 const Home = React.lazy(() => import('../pages/Home'));
 const Dashboard = React.lazy(() => import('../pages/Dashboard'));
 const TodoPage = React.lazy(() => import('../pages/TodoPage'));
@@ -36,6 +37,7 @@ const AppRoutes: React.FC = () => {
         {/* --- Public Routes --- */}
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
+        <Route path="/signup" element={<SignUpForm />} />
         <Route path="/" element={<Navigate to="/home" replace />} />
 
         {/* --- Protected Routes --- */}

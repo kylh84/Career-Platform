@@ -1,11 +1,5 @@
 import authService from '../authService';
-import { loginDummyJSON } from '../axios';
 import { User } from '../../features/auth/types';
-
-// Mock loginDummyJSON
-jest.mock('../axios', () => ({
-  loginDummyJSON: jest.fn(),
-}));
 
 // Define mock storage interface
 interface MockStorage {
@@ -61,51 +55,25 @@ describe('authService', () => {
     it('should login successfully with mock user', async () => {
       const mockUser: User = {
         id: 1,
-        username: 'emilys',
-        email: 'emily@example.com',
-        firstName: 'Emily',
-        lastName: 'Smith',
-        gender: 'female',
-        image: 'https://example.com/image.jpg',
-        token: 'mock-token',
+        username: 'testuser',
+        email: 'test@example.com',
+        firstName: 'Test',
+        lastName: 'User',
+        gender: 'Male',
+        image: 'https://robohash.org/testuser.png',
+        token: 'mock-token-123',
       };
 
-      (loginDummyJSON as jest.Mock).mockResolvedValueOnce(mockUser);
-
-      const result = await authService.login({ username: 'emilys', password: 'password' });
+      const result = await authService.login({ email: 'test@example.com', password: 'test123' });
 
       expect(result).toEqual(mockUser);
       expect(window.localStorage.setItem).toHaveBeenCalledWith('user', JSON.stringify(mockUser));
-      expect(window.sessionStorage.setItem).toHaveBeenCalledWith('token', mockUser.token);
-    });
-
-    it('should login successfully with regular user', async () => {
-      const mockUser: User = {
-        id: 2,
-        username: 'john',
-        email: 'john@example.com',
-        firstName: 'John',
-        lastName: 'Doe',
-        gender: 'male',
-        image: 'https://example.com/image.jpg',
-        token: 'mock-token',
-      };
-
-      (loginDummyJSON as jest.Mock).mockResolvedValueOnce(mockUser);
-
-      const result = await authService.login({ username: 'john', password: 'password' });
-
-      expect(result).toEqual(mockUser);
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('user', JSON.stringify(mockUser));
-      expect(window.sessionStorage.setItem).toHaveBeenCalledWith('token', mockUser.token);
+      expect(window.localStorage.setItem).toHaveBeenCalledWith('token', mockUser.token);
     });
 
     it('should handle login failure', async () => {
-      (loginDummyJSON as jest.Mock).mockRejectedValueOnce(new Error('Login failed'));
-
-      await expect(authService.login({ username: 'invalid', password: 'password' })).rejects.toThrow('Login failed');
+      await expect(authService.login({ email: 'invalid@example.com', password: 'wrongpass' })).rejects.toThrow('Incorrect email or password');
       expect(window.localStorage.setItem).not.toHaveBeenCalled();
-      expect(window.sessionStorage.setItem).not.toHaveBeenCalled();
     });
   });
 

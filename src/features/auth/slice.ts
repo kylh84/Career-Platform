@@ -18,30 +18,25 @@ console.log('Initial auth state:', initialState);
 
 export const login = createAsyncThunk('auth/login', async (credentials: LoginCredentials, { rejectWithValue }) => {
   try {
-    // Xử lý đặc biệt cho tài khoản DummyJSON
-    if (credentials.username === 'emilys' && credentials.password !== 'emilyspass') {
-      return rejectWithValue('Sai mật khẩu cho tài khoản DummyJSON. Vui lòng sử dụng "emilyspass"');
-    }
-
     const response = await authService.login(credentials);
     console.log('Login response from API:', response);
     return response;
   } catch (error: unknown) {
-    // Xử lý lỗi từ API
+    // Handle API errors
     if (error && typeof error === 'object' && 'response' in error) {
       const response = (error as { response?: { status: number; data?: { message?: string } } }).response;
       if (response) {
         const status = response.status;
-        const message = response.data?.message || 'Đăng nhập thất bại';
+        const message = response.data?.message || 'Login failed';
 
         if (status === 400) {
-          return rejectWithValue(`Thông tin đăng nhập không hợp lệ: ${message}`);
+          return rejectWithValue(`Invalid login information: ${message}`);
         } else if (status === 401) {
-          return rejectWithValue('Sai tên đăng nhập hoặc mật khẩu');
+          return rejectWithValue('Incorrect email or password');
         } else if (status === 429) {
-          return rejectWithValue('Quá nhiều yêu cầu. Vui lòng thử lại sau');
+          return rejectWithValue('Too many requests. Please try again later');
         } else {
-          return rejectWithValue(`Lỗi máy chủ (${status}): ${message}`);
+          return rejectWithValue(`Server error (${status}): ${message}`);
         }
       }
     }
@@ -51,7 +46,7 @@ export const login = createAsyncThunk('auth/login', async (credentials: LoginCre
       return rejectWithValue(error.message);
     }
 
-    return rejectWithValue('Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng và thử lại');
+    return rejectWithValue('Unable to connect to the server. Please check your network and try again');
   }
 });
 
@@ -59,7 +54,7 @@ export const refreshUser = createAsyncThunk('auth/refreshUser', async (_, { reje
   try {
     const user = authService.getCurrentUser();
     if (!user) {
-      return rejectWithValue('Không tìm thấy thông tin người dùng');
+      return rejectWithValue('User information not found');
     }
     console.log('Refreshed user data:', user);
     return user;
@@ -67,7 +62,7 @@ export const refreshUser = createAsyncThunk('auth/refreshUser', async (_, { reje
     if (error instanceof Error) {
       return rejectWithValue(error.message);
     }
-    return rejectWithValue('Không thể cập nhật thông tin người dùng');
+    return rejectWithValue('Unable to update user information');
   }
 });
 
@@ -121,7 +116,7 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.isAuthenticated = false;
         state.user = null;
-        state.error = (action.payload as string) || 'Đăng nhập thất bại. Vui lòng thử lại.';
+        state.error = (action.payload as string) || 'Login failed. Please try again.';
         console.log('Auth state updated after login failure:', { isAuthenticated: false, error: state.error });
       })
       .addCase(refreshUser.fulfilled, (state, action: PayloadAction<User>) => {

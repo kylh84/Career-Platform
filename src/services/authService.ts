@@ -1,5 +1,5 @@
-import axiosInstance, { loginDummyJSON } from './axios';
-import { LoginCredentials, LoginResponse, User } from '../features/auth/types';
+import axiosInstance from './axios';
+import { LoginCredentials, User } from '../features/auth/types';
 import { validateToken } from '../features/auth/utils';
 
 const TOKEN_LIFETIME = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
@@ -34,62 +34,64 @@ interface ApiSession {
 const authService = {
   login: async (credentials: LoginCredentials) => {
     try {
-      console.log('Đang đăng nhập với tài khoản:', credentials.username);
-
-      // Thêm timestamp để tránh cache và lỗi 304
+      console.log('Mock login with account:', credentials.email);
       const timestamp = new Date().getTime();
-
       let userData: User | null = null;
 
-      if (credentials.username === 'emilys') {
-        // Điều chỉnh tham số để tránh lỗi 304
-        const response = await loginDummyJSON(credentials.username, credentials.password, timestamp);
-        if (response && response.token) {
-          // Thiết lập cookie thay vì localStorage
-          document.cookie = `auth_token=${response.token}; path=/; secure; samesite=strict; max-age=${TOKEN_LIFETIME / 1000}`;
-
-          // Vẫn lưu user data trong state để sử dụng
-          userData = response;
-          sessionStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
-
-          // Cập nhật bộ nhớ cache
-          cachedAuthState = {
-            isValid: true,
-            lastChecked: timestamp,
-            user: userData,
-          };
-        }
-        return response;
-      }
-
-      // Sử dụng axiosInstance cho các tài khoản khác, với tham số chống cache
-      const response = await axiosInstance.post<LoginResponse>('/auth/login', {
-        username: credentials.username,
-        password: credentials.password,
-        _t: timestamp, // Thêm timestamp để tránh cache
-      });
-
-      // Lưu token vào localStorage nếu có
-      if (response.data && response.data.token) {
-        localStorage.setItem('token', response.data.token);
+      // 1. Check hardcoded test@example.com for backward compatibility
+      if (credentials.email === 'test@example.com' && credentials.password === 'test123') {
+        userData = {
+          id: 1,
+          username: 'testuser',
+          email: 'test@example.com',
+          firstName: 'Test',
+          lastName: 'User',
+          gender: 'Male',
+          image: 'https://robohash.org/testuser.png',
+          token: 'mock-token-123',
+        };
+        localStorage.setItem('token', userData.token);
         localStorage.setItem('login_timestamp', timestamp.toString());
-        // Lưu thông tin user
-        userData = response.data;
         localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
-        console.log('Đã lưu thông tin người dùng:', userData);
-
-        // Cập nhật bộ nhớ cache
         cachedAuthState = {
           isValid: true,
           lastChecked: timestamp,
           user: userData,
         };
+        return userData;
       }
 
-      return response.data;
+      // 2. Check mock_users in localStorage
+      const usersRaw = localStorage.getItem('mock_users');
+      const users: { name: string; email: string; password: string }[] = usersRaw ? JSON.parse(usersRaw) : [];
+      const found = users.find((u) => u.email === credentials.email && u.password === credentials.password);
+      if (found) {
+        userData = {
+          id: Date.now(),
+          username: found.name,
+          email: found.email,
+          firstName: found.name,
+          lastName: '',
+          gender: 'Other',
+          image: 'https://robohash.org/' + encodeURIComponent(found.email) + '.png',
+          token: 'mock-token-' + Date.now(),
+        };
+        localStorage.setItem('token', userData.token);
+        localStorage.setItem('login_timestamp', timestamp.toString());
+        localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+        cachedAuthState = {
+          isValid: true,
+          lastChecked: timestamp,
+          user: userData,
+        };
+        return userData;
+      }
+
+      // 3. If not found, throw error
+      throw new Error('Incorrect email or password');
     } catch (error) {
-      console.error('Lỗi khi đăng nhập:', error);
-      throw error; // Ném lỗi để Redux slice xử lý
+      console.error('Login error:', error);
+      throw error;
     }
   },
 
@@ -98,25 +100,21 @@ const authService = {
     localStorage.removeItem('login_timestamp');
     localStorage.removeItem(USER_DATA_KEY);
 
-    // Đảm bảo đăng xuất sẽ xóa mọi thông tin người dùng
     window.sessionStorage.clear();
 
-    // Reset cached state
     cachedAuthState = {
       isValid: false,
       lastChecked: 0,
       user: null,
     };
 
-    // Làm mới trình duyệt để đảm bảo xóa hết cache
     window.location.href = '/login';
   },
 
   getCurrentUser: () => {
-    // Nếu đã có thông tin user trong cache và session vẫn hợp lệ, sử dụng lại
     const now = new Date().getTime();
     if (cachedAuthState.user && cachedAuthState.isValid && now - cachedAuthState.lastChecked < CACHE_DURATION) {
-      console.log('Sử dụng thông tin người dùng từ cache:', cachedAuthState.user);
+      console.log('Using user information from cache:', cachedAuthState.user);
       return cachedAuthState.user;
     }
 
@@ -124,9 +122,8 @@ const authService = {
     const isValid = authService.isSessionValid();
 
     if (!token || !isValid) {
-      console.log('Token không tồn tại hoặc không hợp lệ');
+      console.log('Token does not exist or is invalid');
 
-      // Cập nhật cache với trạng thái không hợp lệ
       cachedAuthState = {
         isValid: false,
         lastChecked: now,
@@ -137,15 +134,13 @@ const authService = {
     }
 
     try {
-      // Kiểm tra xem có thông tin user trong localStorage không
       const savedUserData = localStorage.getItem(USER_DATA_KEY);
 
       if (savedUserData) {
         try {
           const userData = JSON.parse(savedUserData) as User;
-          console.log('Đã lấy thông tin người dùng từ localStorage:', userData);
+          console.log('Fetched user information from localStorage:', userData);
 
-          // Cập nhật cache
           cachedAuthState = {
             isValid: true,
             lastChecked: now,
@@ -154,16 +149,15 @@ const authService = {
 
           return userData;
         } catch (e) {
-          console.error('Lỗi khi parse dữ liệu người dùng:', e);
+          console.error('Error parsing user data:', e);
           localStorage.removeItem(USER_DATA_KEY);
         }
       }
 
-      // Nếu không có dữ liệu user đã lưu, tạo thông tin mẫu
-      console.log('Không tìm thấy dữ liệu user, tạo dữ liệu mẫu');
+      console.log('No user data found, create sample data');
       const mockUser: User = {
         id: 1,
-        username: 'emilys',
+        username: 'emily',
         email: 'emily@example.com',
         firstName: 'Emily',
         lastName: 'Smith',
@@ -172,10 +166,8 @@ const authService = {
         token: token,
       };
 
-      // Lưu thông tin user mẫu vào localStorage để sử dụng lần sau
       localStorage.setItem(USER_DATA_KEY, JSON.stringify(mockUser));
 
-      // Cập nhật cache
       cachedAuthState = {
         isValid: true,
         lastChecked: now,
@@ -184,9 +176,8 @@ const authService = {
 
       return mockUser;
     } catch (error) {
-      console.error('Lỗi khi lấy thông tin người dùng hiện tại:', error);
+      console.error('Error getting current user information:', error);
 
-      // Cập nhật cache với trạng thái lỗi
       cachedAuthState = {
         isValid: false,
         lastChecked: now,
@@ -197,12 +188,10 @@ const authService = {
     }
   },
 
-  // Kiểm tra xem phiên đăng nhập có hiệu lực không
   isSessionValid: () => {
-    // Nếu đã có kết quả trong cache, sử dụng lại
     const now = new Date().getTime();
     if (now - cachedAuthState.lastChecked < CACHE_DURATION) {
-      console.log('Sử dụng kết quả kiểm tra phiên từ cache:', cachedAuthState.isValid);
+      console.log('Using session check results from cache:', cachedAuthState.isValid);
       return cachedAuthState.isValid;
     }
 
@@ -210,20 +199,18 @@ const authService = {
     const loginTimestamp = localStorage.getItem('login_timestamp');
 
     if (!token || !loginTimestamp) {
-      console.log('Token hoặc timestamp không tồn tại, phiên đăng nhập không hợp lệ');
+      console.log('Token or timestamp does not exist, invalid login session');
 
-      // Cập nhật cache
       cachedAuthState.isValid = false;
       cachedAuthState.lastChecked = now;
 
       return false;
     }
 
-    // Kiểm tra thời gian sống của token
     const tokenDate = parseInt(loginTimestamp, 10);
     const isValid = now - tokenDate < TOKEN_LIFETIME;
 
-    console.log('Kiểm tra phiên đăng nhập:', {
+    console.log('Checking login session:', {
       isValid,
       now: new Date(now).toLocaleString(),
       loginTime: new Date(tokenDate).toLocaleString(),
@@ -232,28 +219,24 @@ const authService = {
     });
 
     if (!isValid) {
-      console.log('Token đã hết hạn. Thời gian hiện tại:', new Date(now).toLocaleString(), 'Thời gian đăng nhập:', new Date(tokenDate).toLocaleString());
-      // Tự động xóa token hết hạn
+      console.log('Token expired. Current time:', new Date(now).toLocaleString(), 'Login time:', new Date(tokenDate).toLocaleString());
       localStorage.removeItem('token');
       localStorage.removeItem('login_timestamp');
       localStorage.removeItem(USER_DATA_KEY);
     }
 
-    // Thêm validation JWT
     const cookieToken = authService.getTokenFromCookie();
     if (cookieToken && !validateToken(cookieToken)) {
       console.log('JWT validation failed');
       return false;
     }
 
-    // Cập nhật cache
     cachedAuthState.isValid = isValid;
     cachedAuthState.lastChecked = now;
 
     return isValid;
   },
 
-  // Hàm helper để lấy token từ cookie
   getTokenFromCookie: (): string | null => {
     const cookies = document.cookie.split(';');
     for (const cookie of cookies) {
@@ -288,7 +271,6 @@ const authService = {
     }
   },
 
-  // Kiểm tra và tự động làm mới token nếu cần
   checkAndRefreshToken: async () => {
     const loginTimestamp = localStorage.getItem('login_timestamp');
     if (!loginTimestamp) return false;
@@ -296,16 +278,14 @@ const authService = {
     const tokenAge = new Date().getTime() - parseInt(loginTimestamp, 10);
     const timeUntilExpiry = TOKEN_LIFETIME - tokenAge;
 
-    // Nếu token sắp hết hạn (còn dưới ngưỡng), làm mới nó
     if (timeUntilExpiry > 0 && timeUntilExpiry < TOKEN_REFRESH_THRESHOLD) {
-      console.log('Token sắp hết hạn, đang làm mới...');
+      console.log('Token is about to expire, refreshing...');
       return await authService.refreshToken();
     }
 
-    return timeUntilExpiry > 0; // Token vẫn còn hiệu lực
+    return timeUntilExpiry > 0;
   },
 
-  // Đăng ký phiên mới khi đăng nhập
   registerSession: async () => {
     try {
       const token = authService.getTokenFromCookie();
@@ -318,7 +298,6 @@ const authService = {
         sessionId: Date.now().toString(36) + Math.random().toString(36).substring(2),
       };
 
-      // Lưu thông tin phiên hiện tại
       localStorage.setItem(
         'current_session',
         JSON.stringify({
@@ -329,7 +308,6 @@ const authService = {
         })
       );
 
-      // Gửi thông tin phiên lên server
       const response = await axiosInstance.post('/auth/sessions/register', {
         deviceInfo,
         token,
@@ -337,12 +315,11 @@ const authService = {
 
       return !!response.data.success;
     } catch (error) {
-      console.error('Không thể đăng ký phiên:', error);
+      console.error('Cannot register session:', error);
       return false;
     }
   },
 
-  // Lấy danh sách phiên hoạt động
   getActiveSessions: async (): Promise<Session[]> => {
     try {
       const response = await axiosInstance.get('/auth/sessions');
@@ -358,23 +335,21 @@ const authService = {
 
       return [];
     } catch (error) {
-      console.error('Không thể lấy danh sách phiên:', error);
+      console.error('Cannot get session list:', error);
       return [];
     }
   },
 
-  // Đăng xuất từ một phiên cụ thể
   logoutSession: async (sessionId: string) => {
     try {
       const response = await axiosInstance.post('/auth/sessions/revoke', { sessionId });
       return !!response.data.success;
     } catch (error) {
-      console.error('Không thể đăng xuất phiên:', error);
+      console.error('Cannot logout session:', error);
       return false;
     }
   },
 
-  // Đăng xuất khỏi tất cả phiên trừ phiên hiện tại
   logoutAllOtherSessions: async () => {
     try {
       const currentSession = JSON.parse(localStorage.getItem('current_session') || '{}');
@@ -386,7 +361,7 @@ const authService = {
 
       return !!response.data.success;
     } catch (error) {
-      console.error('Không thể đăng xuất các phiên khác:', error);
+      console.error('Cannot logout other sessions:', error);
       return false;
     }
   },

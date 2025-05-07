@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { FiUser, FiLock, FiEye, FiEyeOff, FiAlertCircle } from 'react-icons/fi';
 import { useAppSelector, useAppDispatch } from '../../../store';
-import { login, resetAuthState } from '../slice';
-import { useForm } from 'react-hook-form';
-import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { useToast } from '../../../hooks/useToast.hook';
-import { useNavigate } from 'react-router-dom';
-import { useI18n } from '../../../i18n';
+import { login, resetAuthState } from '../slice';
+import { useNavigate, Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 
 interface LoginCredentials {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -18,34 +16,22 @@ const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const { isLoading: loading, error, isAuthenticated, user } = useAppSelector((state) => state.auth);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [rememberMe, setRememberMe] = useLocalStorage('rememberMe', false);
-  const [savedUsername, setSavedUsername] = useLocalStorage('savedUsername', '');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
   const toast = useToast();
-  const { t } = useI18n();
 
   const {
     register,
     handleSubmit,
-    setValue,
     watch,
     formState: { errors, dirtyFields },
   } = useForm<LoginCredentials>({
     defaultValues: {
-      username: savedUsername || '',
+      email: '',
       password: '',
     },
     mode: 'onChange',
   });
-
-  // Điền username đã lưu (nếu có)
-  useEffect(() => {
-    console.log('LoginForm mounted');
-    if (savedUsername) {
-      setValue('username', savedUsername);
-    }
-  }, [savedUsername, setValue]);
 
   // Hiển thị thông báo khi đăng nhập thành công và chuyển hướng
   useEffect(() => {
@@ -75,85 +61,48 @@ const LoginForm: React.FC = () => {
 
   // Theo dõi thay đổi mật khẩu để đánh giá độ mạnh
   const password = watch('password');
-  const username = watch('username');
 
   // Sử dụng useMemo để tính toán độ mạnh mật khẩu
-  const calculatePasswordStrength = useCallback((pass: string, user: string): number => {
-    // Kiểm tra trường hợp tài khoản test
-    if (user === 'emilys' && pass === 'emilyspass') {
-      return 5; // Mạnh nhất cho tài khoản test
-    }
-
+  const calculatePasswordStrength = useCallback((pass: string): number => {
     if (!pass) return 0;
-
     let score = 0;
-    // Độ dài
     if (pass.length >= 6) score += 1;
     if (pass.length >= 10) score += 1;
-
-    // Độ phức tạp
     if (/[A-Z]/.test(pass)) score += 1;
     if (/[0-9]/.test(pass)) score += 1;
     if (/[^A-Za-z0-9]/.test(pass)) score += 1;
-
     return Math.min(score, 5);
   }, []);
 
   // Memoize độ mạnh mật khẩu để tránh tính toán lại khi render
   useEffect(() => {
-    const strength = calculatePasswordStrength(password || '', username || '');
+    const strength = calculatePasswordStrength(password || '');
     setPasswordStrength(strength);
-  }, [password, username, calculatePasswordStrength]);
+  }, [password, calculatePasswordStrength]);
 
   // Memoize hàm xử lý đăng nhập
   const onSubmit = useCallback(
     async (data: LoginCredentials) => {
       setIsSubmitted(true);
-      console.log('LoginForm - Submitting credentials:', { username: data.username, passwordLength: data.password.length });
-
-      // Lưu username nếu chọn "Ghi nhớ đăng nhập"
-      if (rememberMe) {
-        setSavedUsername(data.username);
-      } else if (!rememberMe && savedUsername) {
-        // Xóa username đã lưu nếu không chọn "Ghi nhớ đăng nhập"
-        setSavedUsername('');
-      }
-
+      console.log('LoginForm - Submitting credentials:', { email: data.email, passwordLength: data.password.length });
       try {
         console.log('LoginForm - Dispatching login action');
         const result = await dispatch(login(data)).unwrap();
         console.log('LoginForm - Login successful, API response:', result);
-
-        // Kiểm tra xem kết quả có token không
         if (!result || !result.token) {
           console.error('LoginForm - Login response missing token!', result);
-          toast.error('Đăng nhập không thành công: Thiếu token xác thực');
+          toast.error('Login failed: Missing authentication token');
           return;
         }
-
-        // Đảm bảo thông tin phiên đã được lưu vào localStorage
         if (!localStorage.getItem('token')) {
-          console.warn('LoginForm - Token not saved in localStorage after login!');
           localStorage.setItem('token', result.token);
           localStorage.setItem('login_timestamp', new Date().getTime().toString());
         }
-
-        // Không cần redirects thủ công ở đây
-        // React Router sẽ tự động xử lý chuyển hướng dựa trên state Redux trong useEffect
       } catch (error) {
         console.error('LoginForm - Login error:', error);
-        // Lỗi đã được xử lý trong useEffect
       }
     },
-    [dispatch, rememberMe, savedUsername, setSavedUsername, toast]
-  );
-
-  // Memoize hàm xử lý checkbox "Remember me"
-  const handleRememberMeChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setRememberMe(e.target.checked);
-    },
-    [setRememberMe]
+    [dispatch, toast]
   );
 
   // Chức năng hiển thị/ẩn mật khẩu
@@ -167,7 +116,7 @@ const LoginForm: React.FC = () => {
 
     return (
       <div className="mt-2">
-        <p className="text-xs text-gray-600 mb-1">{t('auth.login.passwordStrength')}</p>
+        <p className="text-xs text-gray-600 mb-1">Password Strength</p>
         <div className="bg-gray-200 h-1.5 rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full ${passwordStrength < 2 ? 'bg-red-500' : passwordStrength < 4 ? 'bg-yellow-500' : 'bg-green-500'}`}
@@ -176,7 +125,7 @@ const LoginForm: React.FC = () => {
         </div>
       </div>
     );
-  }, [password, errors.password, passwordStrength, t]);
+  }, [password, errors.password, passwordStrength]);
 
   // Memoize nút submit
   const submitButton = useMemo(
@@ -188,10 +137,10 @@ const LoginForm: React.FC = () => {
         focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         disabled={loading}
       >
-        {loading ? t('auth.login.loading') : t('auth.login.submit')}
+        {loading ? 'Loading...' : 'Login'}
       </button>
     ),
-    [loading, t]
+    [loading]
   );
 
   // Memoize thông báo lỗi
@@ -215,52 +164,52 @@ const LoginForm: React.FC = () => {
   return (
     <div className="bg-white shadow-xl rounded-xl overflow-hidden border border-gray-100 p-6">
       <div className=" -mx-6 -mt-6 px-6 py-4 mb-6 text-center">
-        <h2 className="text-4xl font-bold mb-2 text-black">{t('auth.login.title')}</h2>
-        <p className="text-gray-500 text-lg">{t('auth.login.subtitle')}</p>
+        <h2 className="text-4xl font-bold mb-2 text-black">Login</h2>
+        <p className="text-gray-500 text-lg">Welcome back!</p>
       </div>
 
       {errorMessage}
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
-          <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-            {t('auth.login.username')}
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            Email
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <FiUser className="h-5 w-5 text-gray-400" />
             </div>
             <input
-              id="username"
-              type="text"
-              placeholder={t('auth.login.username')}
+              id="email"
+              type="email"
+              placeholder="Email"
               className={`pl-10 block w-full rounded-md shadow-sm border ${
-                errors.username ? 'border-red-500' : dirtyFields.username ? 'border-green-500' : 'border-gray-300'
+                errors.email ? 'border-red-500' : dirtyFields.email ? 'border-green-500' : 'border-gray-300'
               } bg-white text-gray-900 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
-              {...register('username', {
-                required: t('auth.validation.required', { field: t('auth.login.username') }),
-                minLength: {
-                  value: 3,
-                  message: t('auth.validation.minLength', { field: t('auth.login.username'), min: '3' }),
-                },
-                maxLength: {
-                  value: 20,
-                  message: t('auth.validation.maxLength', { field: t('auth.login.username'), max: '20' }),
-                },
-                pattern: {
-                  value: /^[a-zA-Z0-9._-]+$/,
-                  message: t('auth.validation.pattern', { field: t('auth.login.username') }) || 'Tên đăng nhập chỉ được chứa chữ cái, số và các ký tự . _ -',
+              {...register('email', {
+                required: 'Email is required',
+                validate: (value) => {
+                  const trimmed = value.trim();
+                  if (!trimmed) return 'Email is required';
+                  if (/\s/.test(trimmed)) return 'Email must not contain spaces';
+                  if (!trimmed.includes('@')) return 'Email must include @';
+                  if (!trimmed.toLowerCase().endsWith('.com')) return 'Email must end with .com';
+                  if (trimmed.startsWith('.') || trimmed.endsWith('.')) return 'Email must not start or end with a dot (.)';
+                  if ((trimmed.match(/@/g) || []).length !== 1) return 'Email must contain exactly one @';
+                  if (trimmed.length < 6) return 'Email must be at least 6 characters';
+                  if (trimmed.length > 50) return 'Email must be at most 50 characters';
+                  return true;
                 },
               })}
               disabled={loading}
             />
           </div>
-          {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>}
+          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
         </div>
 
         <div className="mb-6">
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            {t('auth.login.password')}
+            Password
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -269,19 +218,19 @@ const LoginForm: React.FC = () => {
             <input
               id="password"
               type={passwordVisible ? 'text' : 'password'}
-              placeholder={t('auth.login.password')}
+              placeholder="Password"
               className={`pl-10 block w-full rounded-md shadow-sm border ${
                 errors.password ? 'border-red-500' : dirtyFields.password ? 'border-green-500' : 'border-gray-300'
               } bg-white text-gray-900 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
               {...register('password', {
-                required: t('auth.validation.required', { field: t('auth.login.password') }),
+                required: 'Password is required',
                 minLength: {
                   value: 6,
-                  message: t('auth.validation.minLength', { field: t('auth.login.password'), min: '6' }),
+                  message: 'Password must be at least 6 characters',
                 },
                 maxLength: {
                   value: 50,
-                  message: t('auth.validation.maxLength', { field: t('auth.login.password'), max: '50' }),
+                  message: 'Password must be at most 50 characters',
                 },
               })}
               disabled={loading}
@@ -294,34 +243,23 @@ const LoginForm: React.FC = () => {
 
           {passwordStrengthIndicator}
         </div>
-
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center">
-            <input
-              id="remember-me"
-              name="remember-me"
-              type="checkbox"
-              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              checked={rememberMe}
-              onChange={handleRememberMeChange}
-            />
-            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-              {t('auth.login.remember')}
-            </label>
-          </div>
-
-          <div className="text-sm">
-            <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-              {t('auth.login.forgot')}
-            </a>
-          </div>
+        <div className="flex justify-end mb-6">
+          <a href="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-500 font-medium">
+            Forgot password?
+          </a>
         </div>
-
         {submitButton}
       </form>
+      <hr className="my-6 border-t border-gray-200" />
+      {/* Footer */}
+      <div className="text-center mt-6">
+        <p className="text-sm text-gray-600">Don't have an account? </p>
+        <Link to="/signup" className="text-indigo-600 hover:text-indigo-500 font-medium">
+          Sign up
+        </Link>
+      </div>
     </div>
   );
 };
 
 export default React.memo(LoginForm);
-//create login form

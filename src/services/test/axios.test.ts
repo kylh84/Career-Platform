@@ -1,9 +1,8 @@
-import axios, { AxiosHeaders, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
-import axiosInstance, { loginDummyJSON } from '../axios';
+import { AxiosHeaders, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import axiosInstance from '../axios';
 
 // Mock axios
 jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 // Define types for interceptor handlers
 type InterceptorHandler<T> = {
@@ -156,21 +155,6 @@ describe('axiosInstance', () => {
       await (axiosInstance as unknown as MockedAxiosInstance).interceptors.response.handlers[0].rejected(error);
       expect(localStorage.removeItem).toHaveBeenCalledWith('token');
     });
-  });
-});
-// Test case 5: Kiểm tra loginDummyJSON
-describe('loginDummyJSON', () => {
-  it('should return mock data for emilys account', async () => {
-    const result = await loginDummyJSON('emilys', 'emilyspass');
-    expect(result).toHaveProperty('token');
-    expect(result).toHaveProperty('username', 'emilys');
-  });
-  // Test case 6: Kiểm tra xử lý lỗi API
-  it('should handle API errors gracefully', async () => {
-    mockedAxios.post.mockRejectedValueOnce(new Error('API Error'));
-    const result = await loginDummyJSON('emilys', 'emilyspass');
-    expect(result).toHaveProperty('token');
-    expect(result).toHaveProperty('username', 'emilys');
   });
 });
 

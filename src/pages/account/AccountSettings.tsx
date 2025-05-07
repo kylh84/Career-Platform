@@ -1,10 +1,17 @@
 import React from 'react';
-import { useAppSelector } from '../../store';
+import { useAppSelector, useAppDispatch } from '../../store';
 import { Button } from '../../components/common';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { FiUser, FiCreditCard, FiShield, FiLogOut } from 'react-icons/fi';
+import { logout } from '../../features/auth/slice';
 
 const AccountSettings: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/home');
+  };
   const user = useAppSelector((state) => state.auth.user);
   return (
     <div className="min-h-screen flex bg-gray-50">
@@ -28,7 +35,7 @@ const AccountSettings: React.FC = () => {
             <FiShield className="mr-3 text-2xl" /> Security
           </NavLink>
         </nav>
-        <Button variant="light" className="mt-10">
+        <Button onClick={handleLogout} variant="light" className="mt-10">
           <FiLogOut className="inline mr-2" /> Log out
         </Button>
       </aside>
