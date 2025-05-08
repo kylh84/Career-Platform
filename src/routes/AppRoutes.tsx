@@ -2,16 +2,27 @@ import React, { useEffect, Suspense } from 'react';
 import { Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignUpForm from '../features/auth/components/SignUpForm';
+import PrivateRoute from './PrivateRoute';
+import { useAppSelector } from '../store';
+
+// Lazy load public pages
 const Home = React.lazy(() => import('../pages/Home'));
-const Dashboard = React.lazy(() => import('../pages/Dashboard'));
 const TodoPage = React.lazy(() => import('../pages/TodoPage'));
 const ErrorPage = React.lazy(() => import('../pages/error-pages/404Error'));
-const AccountSettings = React.lazy(() => import('../pages/account/AccountSettings'));
-const Profile = React.lazy(() => import('../pages/account/Profile'));
-const Subscription = React.lazy(() => import('../pages/account/Subscription'));
-const Security = React.lazy(() => import('../pages/account/Security'));
-import { useAppSelector } from '../store';
-import PrivateRoute from './PrivateRoute';
+
+// Lazy load dashboard and account pages
+const DashboardLayout = React.lazy(() => import('../pages/dashboard/DashboardLayout'));
+const DashboardHome = React.lazy(() => import('../pages/dashboard/DashboardHome'));
+const CVPage = React.lazy(() => import('../pages/dashboard/CVPage'));
+const CodePage = React.lazy(() => import('../pages/dashboard/CodePage'));
+const RoadmapPage = React.lazy(() => import('../pages/dashboard/RoadmapPage'));
+const CareerPage = React.lazy(() => import('../pages/dashboard/CareerPage'));
+const UpgradePage = React.lazy(() => import('../pages/dashboard/UpgradePage'));
+
+const AccountLayout = React.lazy(() => import('../pages/dashboard/account/AccountLayout'));
+const Profile = React.lazy(() => import('../pages/dashboard/account/Profile'));
+const Subscription = React.lazy(() => import('../pages/dashboard/account/Subscription'));
+const Security = React.lazy(() => import('../pages/dashboard/account/Security'));
 
 const LoadingScreen = ({ message }: { message: string }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -40,15 +51,33 @@ const AppRoutes: React.FC = () => {
         <Route path="/signup" element={<SignUpForm />} />
         <Route path="/" element={<Navigate to="/home" replace />} />
 
-        {/* --- Protected Routes --- */}
+        {/* --- Protected Dashboard Routes --- */}
         <Route
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard />
+              <DashboardLayout />
             </PrivateRoute>
           }
-        />
+        >
+          <Route index element={<DashboardHome />} />
+          <Route path="cv" element={<CVPage />} />
+          <Route path="code" element={<CodePage />} />
+          <Route path="roadmap" element={<RoadmapPage />} />
+          <Route path="career" element={<CareerPage />} />
+          <Route path="upgrade" element={<UpgradePage />} />
+
+          {/* Account nested routes */}
+          <Route path="account" element={<AccountLayout />}>
+            <Route index element={<Profile />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="subscription" element={<Subscription />} />
+            <Route path="security" element={<Security />} />
+            <Route path="upgrade" element={<UpgradePage />} />
+          </Route>
+        </Route>
+
+        {/* --- Todo Example --- */}
         <Route
           path="/todo"
           element={
@@ -57,21 +86,6 @@ const AppRoutes: React.FC = () => {
             </PrivateRoute>
           }
         />
-        {/* Account and nested protected routes */}
-        <Route
-          path="/account"
-          element={
-            <PrivateRoute>
-              <AccountSettings />
-            </PrivateRoute>
-          }
-        >
-          <Route index element={<Profile />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="subscription" element={<Subscription />} />
-          <Route path="security" element={<Security />} />
-          <Route path="*" element={<ErrorPage />} />
-        </Route>
 
         {/* --- Catch-all Route (404) --- */}
         <Route path="*" element={<ErrorPage />} />
