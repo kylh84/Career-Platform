@@ -3,16 +3,12 @@ import { Button } from '../components/common';
 import { useAppSelector, useAppDispatch } from '../store';
 import { logout } from '../features/auth/slice';
 import { useNavigate, NavLink } from 'react-router-dom';
-import LanguageSwitcher from '../i18n/components/LanguageSwitcher';
-import { useI18n } from '../i18n';
 import diagramIcon from '../assets/icons/diagram.png';
 import identityCardIcon from '../assets/icons/identity-card.png';
 import programIcon from '../assets/icons/program.png';
 import targetIcon from '../assets/icons/target.png';
 
 const Header: React.FC = () => {
-  const { t } = useI18n();
-
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -23,63 +19,60 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="flex justify-between items-center px-8 py-6 bg-white shadow-sm">
+    <header className="flex justify-between items-center px-16 py-6 bg-white shadow-sm ">
       <div className="text-2xl font-bold text-gray-900 cursor-pointer" onClick={() => navigate('/home')}>
         Career Platform
       </div>
       <div className="flex items-center gap-6">
         <nav className="flex items-center space-x-8 text-gray-700 font-medium">
           <NavLink to="/home" className={({ isActive }) => (isActive ? 'text-blue-600 font-bold' : 'hover:text-blue-600')}>
-            {t('header.home')}
+            Home
           </NavLink>
           <NavLink to="#features" className={({ isActive }) => (isActive ? 'text-blue-600 font-bold' : 'hover:text-blue-600')}>
-            {t('header.features')}
+            Features
           </NavLink>
           <NavLink to="#pricing" className={({ isActive }) => (isActive ? 'text-blue-600 font-bold' : 'hover:text-blue-600')}>
-            {t('header.pricing')}
+            Pricing
           </NavLink>
           {isAuthenticated ? (
             <>
-              <span className="mr-4">{t('header.hello', { name: user?.firstName || user?.username || '' })}</span>
+              <span className="mr-4">Hello, {user?.firstName || user?.username || ''}</span>
               <button onClick={handleLogout} className="hover:text-blue-600">
-                {t('header.logout')}
+                Logout
               </button>
             </>
           ) : (
             <button onClick={() => navigate('/login')} className="hover:text-blue-600">
-              {t('header.login')}
+              Login
             </button>
           )}
         </nav>
-        <LanguageSwitcher showLabel={false} />
       </div>
     </header>
   );
 };
 
 const Home: React.FC = () => {
-  const { t } = useI18n();
-
   const features = [
     {
       icon: identityCardIcon,
-      title: t('home.features.cv.title'),
-      desc: t('home.features.cv.desc'),
+      title: 'CV Optimization',
+      desc: 'Improve your resume with AI-driven insights',
     },
     {
       icon: programIcon,
-      title: t('home.features.code.title'),
-      desc: t('home.features.code.desc'),
+      title: 'Code Review',
+      desc: 'Get feedback on your code from analysis',
     },
     {
       icon: diagramIcon,
-      title: t('home.features.roadmap.title'),
-      desc: t('home.features.roadmap.desc'),
+      title: 'Learning Roadmap',
+      desc: 'Follow a tailored path to master new skills',
     },
     {
       icon: targetIcon,
-      title: t('home.features.career.title'),
-      desc: t('home.features.career.desc'),
+      title: 'Career Guidance',
+      desc: 'Receive advice on your IT career development',
     },
   ];
 
@@ -89,19 +82,10 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-10 py-16 px-6">
         <div className="flex-2">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
-            {t('home.heroTitle')
-              .split('\n')
-              .map((line, idx) => (
-                <React.Fragment key={idx}>
-                  {line}
-                  <br />
-                </React.Fragment>
-              ))}
-          </h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">Advance Your Tech Career</h1>
           <p className="text-lg text-gray-700 mb-8 max-w-lg">Leverage AI to optimize your CV, evaluate source code, get personalized learning paths, and receive career guidance.</p>
           <Button variant="primary" className="px-8 py-3 text-lg" onClick={() => (window.location.href = '/signup')}>
-            {t('home.getStarted')}
+            Get Started for Free
           </Button>
         </div>
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6">
