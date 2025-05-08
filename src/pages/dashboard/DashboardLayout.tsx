@@ -1,11 +1,11 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { FaIdCard, FaUserGear, FaToolbox, FaCode, FaMap } from 'react-icons/fa6';
+import { FaIdCard, FaUserGear, FaBriefcase, FaCode, FaMap } from 'react-icons/fa6';
 
 const sidebarMenu = [
   { label: 'CV', path: 'cv', icon: <FaIdCard size={26} /> },
   { label: 'Code', path: 'code', icon: <FaCode size={26} /> },
   { label: 'Roadmap', path: 'roadmap', icon: <FaMap size={26} /> },
-  { label: 'Career', path: 'career', icon: <FaToolbox size={26} /> },
+  { label: 'Career', path: 'career', icon: <FaBriefcase size={26} /> },
   { label: 'Account', path: 'account/profile', icon: <FaUserGear size={26} /> },
 ];
 

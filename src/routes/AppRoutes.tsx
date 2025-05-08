@@ -18,7 +18,7 @@ const CodePage = React.lazy(() => import('../pages/dashboard/CodePage'));
 const RoadmapPage = React.lazy(() => import('../pages/dashboard/RoadmapPage'));
 const CareerPage = React.lazy(() => import('../pages/dashboard/CareerPage'));
 const UpgradePage = React.lazy(() => import('../pages/dashboard/UpgradePage'));
-
+const CVSuggestionPage = React.lazy(() => import('../pages/dashboard/CVSuggestionPage'));
 const AccountLayout = React.lazy(() => import('../pages/dashboard/account/AccountLayout'));
 const Profile = React.lazy(() => import('../pages/dashboard/account/Profile'));
 const Subscription = React.lazy(() => import('../pages/dashboard/account/Subscription'));
@@ -61,20 +61,29 @@ const AppRoutes: React.FC = () => {
           }
         >
           <Route index element={<DashboardHome />} />
-          <Route path="cv" element={<CVPage />} />
+          <Route path="cv">
+            <Route index element={<CVPage />} />
+            <Route path="suggestion" element={<CVSuggestionPage />} />
+          </Route>
           <Route path="code" element={<CodePage />} />
           <Route path="roadmap" element={<RoadmapPage />} />
           <Route path="career" element={<CareerPage />} />
           <Route path="upgrade" element={<UpgradePage />} />
+        </Route>
 
-          {/* Account nested routes */}
-          <Route path="account" element={<AccountLayout />}>
-            <Route index element={<Profile />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="subscription" element={<Subscription />} />
-            <Route path="security" element={<Security />} />
-            <Route path="upgrade" element={<UpgradePage />} />
-          </Route>
+        {/* --- Account Standalone Layout --- */}
+        <Route
+          path="/dashboard/account"
+          element={
+            <PrivateRoute>
+              <AccountLayout />
+            </PrivateRoute>
+          }
+        >
+          <Route index element={<Profile />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="subscription" element={<Subscription />} />
+          <Route path="security" element={<Security />} />
         </Route>
 
         {/* --- Todo Example --- */}
