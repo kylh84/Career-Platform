@@ -19,7 +19,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="flex justify-between items-center px-16 py-6 bg-white shadow-sm ">
+    <header className="flex justify-between items-center px-16 py-6 bg-white shadow-sm">
       <div className="text-2xl font-bold text-gray-900 cursor-pointer" onClick={() => navigate('/home')}>
         Career Platform
       </div>

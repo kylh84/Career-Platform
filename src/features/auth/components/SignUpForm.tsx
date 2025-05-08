@@ -1,7 +1,9 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { FiUser, FiLock, FiMail, FiEye, FiEyeOff } from 'react-icons/fi';
+// import { FiUser, FiLock, FiMail, FiEye, FiEyeOff } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
+import authService from '../../../services/authService';
+import { useToast } from '../../../hooks/useToast.hook';
 
 interface SignUpData {
   name: string;
@@ -38,6 +40,7 @@ const SignUpForm: React.FC = () => {
   const password = watch('password');
   const navigate = useNavigate();
   const [signUpError, setSignUpError] = useState<string | null>(null);
+  const { success } = useToast();
 
   // Password strength calculation (same as LoginForm)
   const calculatePasswordStrength = useCallback((pass: string): number => {
@@ -80,29 +83,51 @@ const SignUpForm: React.FC = () => {
   }, [password, passwordStrength]);
 
   const onSubmit = useCallback(
-    (data: SignUpData) => {
+    async (data: SignUpData) => {
       setSignUpError(null);
-      // Get users from localStorage
-      const usersRaw = localStorage.getItem('mock_users');
-      const users: MockUser[] = usersRaw ? JSON.parse(usersRaw) : [];
-      // Check if email exists
-      if (users.some((u: MockUser) => u.email === data.email)) {
-        setSignUpError('Email is already registered. Please use another email.');
-        return;
+      try {
+        // Get users from localStorage
+        const usersRaw = localStorage.getItem('mock_users');
+        const users: MockUser[] = usersRaw ? JSON.parse(usersRaw) : [];
+
+        // Check if email exists
+        if (users.some((u: MockUser) => u.email === data.email)) {
+          setSignUpError('Email is already registered. Please use another email.');
+          return;
+        }
+
+        // Add new user
+        users.push({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        });
+        localStorage.setItem('mock_users', JSON.stringify(users));
+
+        // Automatically log in the user
+        const loginResult = await authService.login({
+          email: data.email,
+          password: data.password,
+        });
+
+        if (loginResult) {
+          // Show success toast
+          success('Registration successful! Redirecting to dashboard...', 2000);
+
+          // Redirect to dashboard after a short delay
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 1000);
+        } else {
+          setSignUpError('Failed to automatically log in. Please try logging in manually.');
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error('Sign up error:', error);
+        setSignUpError('An error occurred during sign up. Please try again.');
       }
-      // Add new user
-      users.push({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      });
-      localStorage.setItem('mock_users', JSON.stringify(users));
-      // Redirect to login with success message
-      setTimeout(() => {
-        navigate('/login', { state: { signUpSuccess: true } });
-      }, 500);
     },
-    [navigate]
+    [navigate, success]
   );
 
   return (
@@ -122,14 +147,14 @@ const SignUpForm: React.FC = () => {
                   Name
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FiUser className="h-5 w-5 text-gray-400" />
-                  </div>
+                  </div> */}
                   <input
                     id="name"
                     type="text"
                     placeholder="Your name"
-                    className={`pl-10 block w-full rounded-md shadow-sm border ${
+                    className={`pl-2 block w-full rounded-md shadow-sm border ${
                       errors.name ? 'border-red-500' : dirtyFields.name ? 'border-green-500' : 'border-gray-300'
                     } bg-white text-gray-900 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
                     {...register('name', {
@@ -147,14 +172,14 @@ const SignUpForm: React.FC = () => {
                   Email address
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FiMail className="h-5 w-5 text-gray-400" />
-                  </div>
+                  </div> */}
                   <input
                     id="email"
                     type="email"
                     placeholder="Email address"
-                    className={`pl-10 block w-full rounded-md shadow-sm border ${
+                    className={`pl-2 block w-full rounded-md shadow-sm border ${
                       errors.email ? 'border-red-500' : dirtyFields.email ? 'border-green-500' : 'border-gray-300'
                     } bg-white text-gray-900 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
                     {...register('email', {
@@ -182,14 +207,14 @@ const SignUpForm: React.FC = () => {
                   Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FiLock className="h-5 w-5 text-gray-400" />
-                  </div>
+                  </div> */}
                   <input
                     id="password"
                     type={passwordVisible ? 'text' : 'password'}
                     placeholder="Password"
-                    className={`pl-10 block w-full rounded-md shadow-sm border ${
+                    className={`pl-2 block w-full rounded-md shadow-sm border ${
                       errors.password ? 'border-red-500' : dirtyFields.password ? 'border-green-500' : 'border-gray-300'
                     } bg-white text-gray-900 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
                     {...register('password', {
@@ -207,7 +232,7 @@ const SignUpForm: React.FC = () => {
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
                     onClick={() => setPasswordVisible((v) => !v)}
                   >
-                    {passwordVisible ? <FiEyeOff className="h-5 w-5" /> : <FiEye className="h-5 w-5" />}
+                    {/* {passwordVisible ? <FiEyeOff className="h-5 w-5" /> : <FiEye className="h-5 w-5" />} */}
                   </button>
                 </div>
                 {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
@@ -219,14 +244,14 @@ const SignUpForm: React.FC = () => {
                   Confirm password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FiLock className="h-5 w-5 text-gray-400" />
-                  </div>
+                  </div> */}
                   <input
                     id="confirmPassword"
                     type={confirmPasswordVisible ? 'text' : 'password'}
                     placeholder="Confirm password"
-                    className={`pl-10 block w-full rounded-md shadow-sm border ${
+                    className={`pl-2 block w-full rounded-md shadow-sm border ${
                       errors.confirmPassword ? 'border-red-500' : dirtyFields.confirmPassword ? 'border-green-500' : 'border-gray-300'
                     } bg-white text-gray-900 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500`}
                     {...register('confirmPassword', {
@@ -239,7 +264,7 @@ const SignUpForm: React.FC = () => {
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
                     onClick={() => setConfirmPasswordVisible((v) => !v)}
                   >
-                    {confirmPasswordVisible ? <FiEyeOff className="h-5 w-5" /> : <FiEye className="h-5 w-5" />}
+                    {/* {confirmPasswordVisible ? <FiEyeOff className="h-5 w-5" /> : <FiEye className="h-5 w-5" />} */}
                   </button>
                 </div>
                 {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>}
