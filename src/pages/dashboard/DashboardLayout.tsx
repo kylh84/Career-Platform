@@ -12,8 +12,9 @@ const sidebarMenu = [
 export default function DashboardLayout() {
   const navigate = useNavigate();
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-64 bg-[#212d43] text-white flex flex-col py-8 px-4">
+    <div>
+      {/* Sidebar  */}
+      <aside className="fixed top-0 left-0 h-screen w-64 bg-[#212d43] text-white flex flex-col py-8 px-4 z-20">
         <div className="text-2xl font-bold mb-10 pl-2 text-center cursor-pointer select-none" onClick={() => navigate('/dashboard')}>
           Career Platform
         </div>
@@ -33,7 +34,8 @@ export default function DashboardLayout() {
           ))}
         </nav>
       </aside>
-      <main className="flex-1 p-10">
+      {/* Main content  */}
+      <main className="ml-64 p-10 min-h-screen">
         <Outlet />
       </main>
     </div>

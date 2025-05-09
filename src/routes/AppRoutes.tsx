@@ -23,6 +23,7 @@ const AccountLayout = React.lazy(() => import('../pages/dashboard/account/Accoun
 const Profile = React.lazy(() => import('../pages/dashboard/account/Profile'));
 const Subscription = React.lazy(() => import('../pages/dashboard/account/Subscription'));
 const Security = React.lazy(() => import('../pages/dashboard/account/Security'));
+const EditProfile = React.lazy(() => import('../pages/dashboard/account/EditProfile'));
 
 const LoadingScreen = ({ message }: { message: string }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -84,6 +85,7 @@ const AppRoutes: React.FC = () => {
           <Route path="profile" element={<Profile />} />
           <Route path="subscription" element={<Subscription />} />
           <Route path="security" element={<Security />} />
+          <Route path="edit" element={<EditProfile />} />
         </Route>
 
         {/* --- Todo Example --- */}

@@ -44,12 +44,7 @@ const Profile: React.FC = () => {
         </div>
       </div>
       <div className="flex flex-col gap-2 mt-6">
-        <Button
-          variant="primary"
-          onClick={() => {
-            /* handle edit */
-          }}
-        >
+        <Button variant="primary" onClick={() => navigate('/dashboard/account/edit')}>
           Edit
         </Button>
         <Button variant="secondary" onClick={() => navigate('/dashboard/account/subscription')}>
