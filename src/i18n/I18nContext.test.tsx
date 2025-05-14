@@ -1,5 +1,6 @@
 import { useContext } from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import I18nContext from './I18nContext';
 import { I18nProvider } from './I18nProvider';
 
@@ -55,7 +56,9 @@ describe('I18nContext', () => {
     expect(screen.getByTestId('available-locales')).toHaveTextContent('vi,en');
   });
 
-  test('translates text according to current locale', () => {
+  test('translates text according to current locale', async () => {
+    const user = userEvent.setup();
+
     render(
       <I18nProvider defaultLocale="en">
         <TestComponent />
@@ -66,13 +69,17 @@ describe('I18nContext', () => {
     expect(screen.getByTestId('translated-text')).toHaveTextContent('Login');
 
     // Switch to Vietnamese
-    screen.getByText('Switch to Vietnamese').click();
+    await user.click(screen.getByText('Switch to Vietnamese'));
 
-    // Check Vietnamese translation
-    expect(screen.getByTestId('translated-text')).toHaveTextContent('Đăng nhập');
+    // Wait for the state update and check Vietnamese translation
+    await waitFor(() => {
+      expect(screen.getByTestId('translated-text')).toHaveTextContent('Đăng nhập');
+    });
   });
 
-  test('persists locale change to localStorage', () => {
+  test('persists locale change to localStorage', async () => {
+    const user = userEvent.setup();
+
     render(
       <I18nProvider defaultLocale="vi">
         <TestComponent />
@@ -80,10 +87,12 @@ describe('I18nContext', () => {
     );
 
     // Switch to English
-    screen.getByText('Switch to English').click();
+    await user.click(screen.getByText('Switch to English'));
 
     // Check if locale was saved to localStorage
-    expect(localStorage.getItem('locale')).toBe('en');
+    await waitFor(() => {
+      expect(localStorage.getItem('locale')).toBe('en');
+    });
   });
 
   test('handles invalid stored locale', () => {

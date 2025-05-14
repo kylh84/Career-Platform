@@ -3,9 +3,9 @@ import { Button } from '../components/common';
 import { useAppSelector, useAppDispatch } from '../store';
 import { logout } from '../features/auth/slice';
 import { useNavigate, NavLink } from 'react-router-dom';
-import diagramIcon from '../assets/icons/diagram.png';
-import identityCardIcon from '../assets/icons/identity-card.png';
-import programIcon from '../assets/icons/program.png';
+import roadmapIcon from '../assets/icons/roadmap.png';
+import cvcheckIcon from '../assets/icons/cv-check.png';
+import codereviewIcon from '../assets/icons/code-review.png';
 import targetIcon from '../assets/icons/target.png';
 
 const Header: React.FC = () => {
@@ -55,17 +55,17 @@ const Header: React.FC = () => {
 const Home: React.FC = () => {
   const features = [
     {
-      icon: identityCardIcon,
+      icon: cvcheckIcon,
       title: 'CV Optimization',
       desc: 'Improve your resume with AI-driven insights',
     },
     {
-      icon: programIcon,
+      icon: codereviewIcon,
       title: 'Code Review',
       desc: 'Get feedback on your code from analysis',
     },
     {
-      icon: diagramIcon,
+      icon: roadmapIcon,
       title: 'Learning Roadmap',
       desc: 'Follow a tailored path to master new skills',
     },
@@ -91,7 +91,7 @@ const Home: React.FC = () => {
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6">
           {features.map((feature) => (
             <div key={feature.title} className="bg-white cursor-pointer rounded-2xl shadow-lg p-2 flex flex-col items-center text-center border border-gray-100 min-h-[240px]">
-              <img src={feature.icon} alt={feature.title} className="w-20 h-20 mx-auto mb-6" />
+              <img src={feature.icon} alt={feature.title} className="w-25 h-20 mx-auto mb-2 mt-6" />
               <div className="font-bold text-xl mb-2">{feature.title}</div>
               <div className="text-gray-600 text-base">{feature.desc}</div>
             </div>

@@ -1,102 +1,150 @@
 import { AxiosHeaders, InternalAxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
-import axiosInstance from '../axios';
 
 // Mock axios
-jest.mock('axios');
-
-// Define types for interceptor handlers
-type InterceptorHandler<T> = {
-  fulfilled: (value: T) => T | Promise<T>;
-  rejected: (error: unknown) => unknown;
-};
-
-// Define types for mocked interceptors
-type MockedInterceptorManager<T> = {
-  handlers: InterceptorHandler<T>[];
-};
-
-type MockedAxiosInstance = {
-  interceptors: {
-    request: MockedInterceptorManager<InternalAxiosRequestConfig>;
-    response: MockedInterceptorManager<AxiosResponse>;
-  };
-};
-
-// Mock axiosInstance
-jest.mock('../axios', () => ({
-  ...jest.requireActual('../axios'),
-  default: {
-    interceptors: {
-      request: {
-        handlers: [] as InterceptorHandler<InternalAxiosRequestConfig>[],
-      },
-      response: {
-        handlers: [] as InterceptorHandler<AxiosResponse>[],
+jest.mock('axios', () => {
+  const mockAxios = {
+    create: jest.fn(() => mockAxiosInstance),
+    defaults: {
+      headers: {
+        common: {},
       },
     },
-  },
-}));
+  };
+  return mockAxios;
+});
 
-describe('axiosInstance', () => {
+// Create a mock axios instance with interceptors
+const mockAxiosInstance = {
+  interceptors: {
+    request: {
+      use: jest.fn(),
+      handlers: [],
+    },
+    response: {
+      use: jest.fn(),
+      handlers: [],
+    },
+  },
+  defaults: {
+    headers: {
+      common: {},
+    },
+  },
+};
+
+// Mock localStorage
+const mockLocalStorage = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: jest.fn((key: string) => store[key] || null),
+    setItem: jest.fn((key: string, value: string) => {
+      store[key] = value;
+    }),
+    removeItem: jest.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: jest.fn(() => {
+      store = {};
+    }),
+  };
+})();
+
+Object.defineProperty(window, 'localStorage', {
+  value: mockLocalStorage,
+});
+
+describe('axios interceptors', () => {
+  let requestInterceptor: {
+    fulfilled: (config: InternalAxiosRequestConfig) => InternalAxiosRequestConfig;
+    rejected: (error: unknown) => unknown;
+  };
+  let responseInterceptor: {
+    fulfilled: (response: AxiosResponse) => AxiosResponse;
+    rejected: (error: unknown) => unknown;
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
-    localStorage.clear();
-    // Reset mock handlers
-    (axiosInstance as unknown as MockedAxiosInstance).interceptors.request.handlers = [];
-    (axiosInstance as unknown as MockedAxiosInstance).interceptors.response.handlers = [];
+    mockLocalStorage.clear();
+
+    // Capture the interceptors when they are registered
+    mockAxiosInstance.interceptors.request.use.mockImplementation((fulfilled, rejected) => {
+      requestInterceptor = { fulfilled, rejected };
+      return 1; // Return a number as interceptor ID
+    });
+
+    mockAxiosInstance.interceptors.response.use.mockImplementation((fulfilled, rejected) => {
+      responseInterceptor = { fulfilled, rejected };
+      return 2; // Return a number as interceptor ID
+    });
+
+    // Import the module to trigger the interceptor registration
+    jest.isolateModules(() => {
+      // Using import instead of require
+      import('../axios');
+    });
   });
-  // Test case 1: Kiểm tra request interceptor thêm authorization header
+
   describe('request interceptor', () => {
-    it('should add authorization header when token exists', async () => {
-      localStorage.setItem('token', 'test-token');
+    it('should add authorization header when token exists', () => {
+      // Setup
+      mockLocalStorage.getItem.mockImplementation((key) => {
+        if (key === 'token') return 'test-token';
+        return null;
+      });
+
       const config: InternalAxiosRequestConfig = {
         headers: new AxiosHeaders(),
         url: '/test',
         method: 'get',
       };
 
-      // Add mock handler
-      (axiosInstance as unknown as MockedAxiosInstance).interceptors.request.handlers.push({
-        fulfilled: (config: InternalAxiosRequestConfig) => {
-          const headers = config.headers as AxiosHeaders;
-          if (headers) {
-            headers.set('Authorization', `Bearer test-token`);
-          }
-          return config;
-        },
-        rejected: (error: unknown) => error,
-      });
+      // Execute
+      const result = requestInterceptor.fulfilled(config);
 
-      const result = await (axiosInstance as unknown as MockedAxiosInstance).interceptors.request.handlers[0].fulfilled(config);
-      const resultHeaders = result.headers as AxiosHeaders;
-      expect(resultHeaders.get('Authorization')).toBe('Bearer test-token');
+      // Assert
+      expect(result.headers.Authorization).toBe('Bearer test-token');
     });
-    // Test case 2: Kiểm tra request interceptor thêm timestamp
-    it('should add timestamp to prevent caching', async () => {
+
+    it('should add timestamp to prevent caching', () => {
+      // Setup
       const config: InternalAxiosRequestConfig = {
         headers: new AxiosHeaders(),
         url: '/test',
         method: 'get',
       };
 
-      // Add mock handler
-      (axiosInstance as unknown as MockedAxiosInstance).interceptors.request.handlers.push({
-        fulfilled: (config: InternalAxiosRequestConfig) => {
-          if (config.url) {
-            config.url += `?_t=${Date.now()}`;
-          }
-          return config;
-        },
-        rejected: (error: unknown) => error,
+      // Execute
+      const result = requestInterceptor.fulfilled(config);
+
+      // Assert
+      expect(result.url).toContain('/test?_t=');
+    });
+
+    it('should add CSRF token for non-GET requests', () => {
+      // Setup
+      mockLocalStorage.getItem.mockImplementation((key) => {
+        if (key === 'csrf_token') return 'test-csrf-token';
+        return null;
       });
 
-      const result = await (axiosInstance as unknown as MockedAxiosInstance).interceptors.request.handlers[0].fulfilled(config);
-      expect(result.url).toContain('_t=');
+      const config: InternalAxiosRequestConfig = {
+        headers: new AxiosHeaders(),
+        url: '/test',
+        method: 'post',
+      };
+
+      // Execute
+      const result = requestInterceptor.fulfilled(config);
+
+      // Assert
+      expect(result.headers['X-CSRF-Token']).toBe('test-csrf-token');
     });
   });
-  // Test case 3: Kiểm tra response interceptor xử lý response thành công
+
   describe('response interceptor', () => {
-    it('should handle successful response', async () => {
+    it('should return response for successful requests', () => {
+      // Setup
       const response: AxiosResponse = {
         status: 200,
         statusText: 'OK',
@@ -105,26 +153,24 @@ describe('axiosInstance', () => {
           headers: new AxiosHeaders(),
         },
         data: { message: 'success' },
-        headers: new AxiosHeaders(),
+        headers: {},
       };
 
-      // Add mock handler
-      (axiosInstance as unknown as MockedAxiosInstance).interceptors.response.handlers.push({
-        fulfilled: (response: AxiosResponse) => response,
-        rejected: (error: unknown) => error,
-      });
+      // Execute
+      const result = responseInterceptor.fulfilled(response);
 
-      const result = await (axiosInstance as unknown as MockedAxiosInstance).interceptors.response.handlers[0].fulfilled(response);
-      expect(result).toEqual(response);
+      // Assert
+      expect(result).toBe(response);
     });
-    // Test case 4: Kiểm tra response interceptor xử lý lỗi 401
-    it('should handle 401 unauthorized response', async () => {
+
+    it('should handle unauthorized errors (401)', () => {
+      // Setup
       const error: AxiosError = {
         response: {
           status: 401,
           statusText: 'Unauthorized',
           data: {},
-          headers: new AxiosHeaders(),
+          headers: {},
           config: {
             url: '/test',
             headers: new AxiosHeaders(),
@@ -140,25 +186,9 @@ describe('axiosInstance', () => {
         toJSON: () => ({}),
       };
 
-      // Add mock handler
-      (axiosInstance as unknown as MockedAxiosInstance).interceptors.response.handlers.push({
-        fulfilled: (response: AxiosResponse) => response,
-        rejected: (error: unknown) => {
-          if (isAxiosError(error)) {
-            localStorage.removeItem('token');
-            return Promise.reject(error);
-          }
-          return error;
-        },
-      });
-
-      await (axiosInstance as unknown as MockedAxiosInstance).interceptors.response.handlers[0].rejected(error);
-      expect(localStorage.removeItem).toHaveBeenCalledWith('token');
+      // Execute & Assert
+      expect(() => responseInterceptor.rejected(error)).toThrow();
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('token');
     });
   });
 });
-
-// Helper function to check if error is AxiosError
-function isAxiosError(error: unknown): error is AxiosError {
-  return (error as AxiosError).isAxiosError === true;
-}

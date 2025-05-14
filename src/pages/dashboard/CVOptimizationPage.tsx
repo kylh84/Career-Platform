@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { FaRegFilePdf } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
 
 const mockResult = {
   strengths: ['Experience with Java and React.js'],
@@ -8,15 +7,21 @@ const mockResult = {
   score: 84,
 };
 
-const CVPage: React.FC = () => {
+const CVOptimizationPage: React.FC = () => {
   const [result, setResult] = useState<typeof mockResult | null>(null);
   const [fileName, setFileName] = useState<string>('');
+  const [isEvaluating, setIsEvaluating] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
 
   const handleEvaluate = (e: React.FormEvent) => {
     e.preventDefault();
-    setResult(mockResult); // Replace with API call later
+    setIsEvaluating(true);
+
+    // Simulate API call with a slight delay for better UX
+    setTimeout(() => {
+      setResult(mockResult);
+      setIsEvaluating(false);
+    }, 800);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,27 +58,39 @@ const CVPage: React.FC = () => {
             </div>
           </div>
           <div className="px-6 pb-6">
-            <button type="submit" className="w-1/2 py-2.5 px-4 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium text-lg">
-              Evaluate
+            <button type="submit" className="w-1/2 py-2.5 px-4 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium text-lg relative" disabled={isEvaluating}>
+              {isEvaluating ? (
+                <>
+                  <span className="opacity-0">Evaluate</span>
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </span>
+                </>
+              ) : (
+                'Evaluate'
+              )}
             </button>
           </div>
         </form>
         {/* Result */}
-        {result && (
-          <div className="flex flex-col md:flex-row gap-4 max-w-3xl w-full">
+        <div className={`transition-all duration-500 ease-in-out ${result ? 'opacity-100 max-h-[1000px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
+          <div className="flex flex-col md:flex-row gap-4 max-w-3xl w-full transform transition-transform duration-500 ease-in-out">
             {/* AI Feedback */}
             <div className="flex-1 bg-white rounded-xl shadow border border-gray-200 p-6">
               <div className="font-semibold mb-2 text-lg">AI Feedback</div>
               <div>
                 <div className="font-bold mb-1">Strengths</div>
                 <ul className="list-disc pl-5 mb-2">
-                  {result.strengths.map((s, i) => (
+                  {result?.strengths.map((s, i) => (
                     <li key={i}>{s}</li>
                   ))}
                 </ul>
                 <div className="font-bold mb-1">Missing Points</div>
                 <ul className="list-disc pl-5">
-                  {result.missing.map((m, i) => (
+                  {result?.missing.map((m, i) => (
                     <li key={i}>{m}</li>
                   ))}
                 </ul>
@@ -82,19 +99,13 @@ const CVPage: React.FC = () => {
             {/* Match Score */}
             <div className="w-full md:w-48 bg-white rounded-xl shadow border border-gray-200 p-6 flex flex-col items-center justify-center">
               <div className="text-lg font-semibold mb-2">Match Score</div>
-              <div className="text-5xl font-bold text-blue-700">{result.score}%</div>
+              <div className="text-5xl font-bold text-blue-700">{result?.score}%</div>
             </div>
           </div>
-        )}
-        <p className="text-center mt-4">
-          Want to generate a CV draft?{' '}
-          <button type="button" className="text-blue-600 underline hover:text-blue-800 font-medium" onClick={() => navigate('/dashboard/cv/suggestion')}>
-            Click here!
-          </button>
-        </p>
+        </div>
       </div>
     </div>
   );
 };
 
-export default CVPage;
+export default CVOptimizationPage;

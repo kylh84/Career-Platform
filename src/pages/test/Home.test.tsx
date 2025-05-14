@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
-import Dashboard from '../Dashboard';
+import Dashboard from '../Home';
 import { logout, refreshUser } from '../../features/auth/slice';
 
 // Mock các dependencies

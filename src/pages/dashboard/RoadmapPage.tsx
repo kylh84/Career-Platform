@@ -9,10 +9,17 @@ const mockCourses = [
 
 const RoadmapPage: React.FC = () => {
   const [showResult, setShowResult] = useState(false);
+  const [isSuggesting, setIsSuggesting] = useState(false);
 
   const handleSuggest = (e: React.FormEvent) => {
     e.preventDefault();
-    setShowResult(true);
+    setIsSuggesting(true);
+
+    // Simulate API call with a slight delay for better UX
+    setTimeout(() => {
+      setShowResult(true);
+      setIsSuggesting(false);
+    }, 800);
   };
 
   return (
@@ -30,11 +37,24 @@ const RoadmapPage: React.FC = () => {
             <label className="block font-medium mr-4 w-1/3 min-w-[180px]">Current Knowledge / Skills</label>
             <input className="flex-1 border rounded px-3 py-2" placeholder="e.g. Python, SQL, statistics" />
           </div>
-          <button type="submit" className="py-2.5 px-8 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium mb-8 mx-auto block">
-            Suggest
+          <button type="submit" className="py-2.5 px-8 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium mb-8 mx-auto block relative" disabled={isSuggesting}>
+            {isSuggesting ? (
+              <>
+                <span className="opacity-0 px-4">Suggest</span>
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+              </>
+            ) : (
+              'Suggest'
+            )}
           </button>
-          {showResult && (
-            <div className="max-w-6xl mx-auto">
+
+          <div className={`transition-all duration-500 ease-in-out ${showResult ? 'opacity-100 max-h-[2000px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
+            <div className="max-w-6xl mx-auto transform transition-transform duration-500 ease-in-out">
               <div className="font-semibold mb-2 text-2xl">Courses</div>
               <table className="w-full mb-4 border border-gray-300 border-collapse">
                 <thead>
@@ -70,7 +90,7 @@ const RoadmapPage: React.FC = () => {
                 ))}
               </div>
             </div>
-          )}
+          </div>
         </form>
       </div>
     </div>

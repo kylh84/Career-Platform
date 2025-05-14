@@ -13,12 +13,12 @@ const ErrorPage = React.lazy(() => import('../pages/error-pages/404Error'));
 // Lazy load dashboard and account pages
 const DashboardLayout = React.lazy(() => import('../pages/dashboard/DashboardLayout'));
 const DashboardHome = React.lazy(() => import('../pages/dashboard/DashboardHome'));
-const CVPage = React.lazy(() => import('../pages/dashboard/CVPage'));
+const CVOptimizationPage = React.lazy(() => import('../pages/dashboard/CVOptimizationPage'));
 const CodePage = React.lazy(() => import('../pages/dashboard/CodePage'));
+const CVSuggestionPage = React.lazy(() => import('../pages/dashboard/CVSuggestionPage'));
 const RoadmapPage = React.lazy(() => import('../pages/dashboard/RoadmapPage'));
 const CareerPage = React.lazy(() => import('../pages/dashboard/CareerPage'));
 const UpgradePage = React.lazy(() => import('../pages/dashboard/UpgradePage'));
-const CVSuggestionPage = React.lazy(() => import('../pages/dashboard/CVSuggestionPage'));
 const AccountLayout = React.lazy(() => import('../pages/dashboard/account/AccountLayout'));
 const Profile = React.lazy(() => import('../pages/dashboard/account/Profile'));
 const Subscription = React.lazy(() => import('../pages/dashboard/account/Subscription'));
@@ -63,8 +63,8 @@ const AppRoutes: React.FC = () => {
         >
           <Route index element={<DashboardHome />} />
           <Route path="cv">
-            <Route index element={<CVPage />} />
-            <Route path="suggestion" element={<CVSuggestionPage />} />
+            <Route path="optimization" element={<CVOptimizationPage />} />
+            <Route path="presentation-suggestions" element={<CVSuggestionPage />} />
           </Route>
           <Route path="code" element={<CodePage />} />
           <Route path="roadmap" element={<RoadmapPage />} />

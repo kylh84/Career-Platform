@@ -157,12 +157,12 @@ const authService = {
       console.log('No user data found, create sample data');
       const mockUser: User = {
         id: 1,
-        username: 'emily',
-        email: 'emily@example.com',
-        firstName: 'Emily',
-        lastName: 'Smith',
-        gender: 'female',
-        image: 'https://robohash.org/hicveldicta.png',
+        username: 'testuser',
+        email: 'test@example.com',
+        firstName: 'Test',
+        lastName: 'User',
+        gender: 'Male',
+        image: 'https://robohash.org/testuser.png',
         token: token,
       };
 
