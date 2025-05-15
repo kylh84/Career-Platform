@@ -9,7 +9,7 @@ import codereviewIcon from '../assets/icons/code-review.png';
 import targetIcon from '../assets/icons/target.png';
 
 const Header: React.FC = () => {
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -36,7 +36,6 @@ const Header: React.FC = () => {
           </NavLink>
           {isAuthenticated ? (
             <>
-              <span className="mr-4">Hello, {user?.firstName || user?.username || ''}</span>
               <button onClick={handleLogout} className="hover:text-blue-600">
                 Logout
               </button>
