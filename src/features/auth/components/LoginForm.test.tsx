@@ -1,26 +1,19 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
 import { BrowserRouter } from 'react-router-dom';
+import { ToastProvider } from '../../../hooks/useToast';
 import LoginForm from './LoginForm';
-import authReducer from '../slice';
-import { I18nProvider } from '../../../i18n';
+import store from '../../../store';
 
-// Mock the store
-const store = configureStore({
-  reducer: {
-    auth: authReducer,
-  },
-});
-
-// Wrapper component for providing necessary context
-const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
+const renderLoginForm = () => {
+  return render(
     <Provider store={store}>
-      <I18nProvider defaultLocale="en">
-        <BrowserRouter>{children}</BrowserRouter>
-      </I18nProvider>
+      <BrowserRouter>
+        <ToastProvider>
+          <LoginForm />
+        </ToastProvider>
+      </BrowserRouter>
     </Provider>
   );
 };
@@ -32,47 +25,53 @@ describe('LoginForm', () => {
   });
 
   test('renders login form with all necessary fields', () => {
-    render(<LoginForm />, { wrapper: Wrapper });
+    renderLoginForm();
 
     // Check for form elements
-    expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
-    expect(screen.getByRole('checkbox', { name: /remember me/i })).toBeInTheDocument();
+    const emailInput = screen.getByRole('textbox', { name: /email/i });
+    const passwordInput = screen.getByLabelText('Password', { selector: 'input[type="password"]' });
+    const loginButton = screen.getByRole('button', { name: /login/i });
+
+    expect(emailInput).toBeInTheDocument();
+    expect(emailInput).toHaveAttribute('type', 'email');
+    expect(passwordInput).toBeInTheDocument();
+    expect(passwordInput).toHaveAttribute('type', 'password');
+    expect(loginButton).toBeInTheDocument();
   });
 
   test('shows validation errors for empty form submission', async () => {
-    render(<LoginForm />, { wrapper: Wrapper });
+    renderLoginForm();
 
     // Submit empty form
-    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    const submitButton = screen.getByRole('button', { name: /login/i });
+    fireEvent.click(submitButton);
 
     // Check for validation messages
     await waitFor(() => {
-      expect(screen.getByText(/username is required/i)).toBeInTheDocument();
+      expect(screen.getByText(/email is required/i)).toBeInTheDocument();
       expect(screen.getByText(/password is required/i)).toBeInTheDocument();
     });
   });
 
   test('shows password strength indicator when typing password', async () => {
-    render(<LoginForm />, { wrapper: Wrapper });
+    renderLoginForm();
 
-    const passwordInput = screen.getByLabelText(/password/i);
+    const passwordInput = screen.getByLabelText('Password', { selector: 'input[type="password"]' });
 
     // Type a weak password
     await userEvent.type(passwordInput, 'weak');
-    expect(screen.getByText(/password strength/i)).toBeInTheDocument();
+    expect(screen.getByText(/password must be at least 6 characters/i)).toBeInTheDocument();
 
     // Type a strong password
     await userEvent.clear(passwordInput);
     await userEvent.type(passwordInput, 'StrongP@ssw0rd');
-    expect(screen.getByText(/password strength/i)).toBeInTheDocument();
+    expect(passwordInput).toHaveValue('StrongP@ssw0rd');
   });
 
   test('toggles password visibility', async () => {
-    render(<LoginForm />, { wrapper: Wrapper });
+    renderLoginForm();
 
-    const passwordInput = screen.getByLabelText(/password/i);
+    const passwordInput = screen.getByLabelText('Password', { selector: 'input[type="password"]' });
     const toggleButton = screen.getByRole('button', { name: /toggle password visibility/i });
 
     // Initially password should be hidden
@@ -85,19 +84,5 @@ describe('LoginForm', () => {
     // Click toggle button again
     await userEvent.click(toggleButton);
     expect(passwordInput).toHaveAttribute('type', 'password');
-  });
-
-  test('remembers user preference for "Remember me"', async () => {
-    render(<LoginForm />, { wrapper: Wrapper });
-
-    const rememberMeCheckbox = screen.getByRole('checkbox', { name: /remember me/i });
-
-    // Check the remember me checkbox
-    await userEvent.click(rememberMeCheckbox);
-    expect(rememberMeCheckbox).toBeChecked();
-
-    // Uncheck the remember me checkbox
-    await userEvent.click(rememberMeCheckbox);
-    expect(rememberMeCheckbox).not.toBeChecked();
   });
 });

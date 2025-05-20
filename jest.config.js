@@ -1,33 +1,23 @@
 export default {
-  // Môi trường test - jsdom cho phép giả lập DOM
+  preset: 'ts-jest',
   testEnvironment: 'jsdom',
-  // Transformers - chuyển đổi TypeScript, JSX, CSS, ...
-  transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', { useESM: true }],
-    '^.+\\.(js|jsx)$': ['babel-jest', { presets: ['@babel/preset-env', '@babel/preset-react'] }],
-  },
-  // Thêm testing-library matchers
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  // Module name mapper - xử lý các import không phải JS/TS
   moduleNameMapper: {
-    // Xử lý các file CSS, SCSS, ...
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    // Xử lý các file tĩnh
-    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/__mocks__/fileMock.js',
-    // Đường dẫn tắt (nếu có)
     '^@/(.*)$': '<rootDir>/src/$1',
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/src/__mocks__/fileMock.js',
   },
-  // Các file/thư mục bỏ qua khi test
+  transform: {
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.test.json',
+      },
+    ],
+  },
+  setupFilesAfterEnv: ['<rootDir>/src/tests/setupTests.ts'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-  // Các file cần transform
-  transformIgnorePatterns: ['/node_modules/(?!@mui)'],
-  // Cấu hình coverage
-  collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}', '!src/**/*.d.ts', '!src/mocks/**', '!src/index.tsx'],
-  // Jest sẽ tìm các file với các pattern này
-  testMatch: ['<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}', '<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}'],
-  globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.app.json',
-    },
-  },
+  moduleDirectories: ['node_modules', 'src'],
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coveragePathIgnorePatterns: ['/node_modules/', '/dist/', '\\.stories\\.tsx$', '/__mocks__/'],
 };

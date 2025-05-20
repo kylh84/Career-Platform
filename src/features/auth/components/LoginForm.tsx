@@ -235,7 +235,12 @@ const LoginForm: React.FC = () => {
               })}
               disabled={loading}
             />
-            <button type="button" className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none" onClick={togglePasswordVisibility}>
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+              onClick={togglePasswordVisibility}
+              aria-label="Toggle password visibility"
+            >
               {passwordVisible ? <FiEyeOff className="h-5 w-5" /> : <FiEye className="h-5 w-5" />}
             </button>
           </div>

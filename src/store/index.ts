@@ -23,7 +23,7 @@ console.log('Initializing Redux store with preloaded state:', preloadedState);
 const store = configureStore({
   reducer: rootReducer,
   preloadedState: preloadedState as unknown as RootState,
-  devTools: import.meta.env.DEV,
+  devTools: process.env.NODE_ENV === 'development',
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

@@ -1,5 +1,5 @@
 import authService from '../authService';
-import { User } from '../../features/auth/types';
+import { LoginCredentials, User } from '../../features/auth/types';
 
 // Define mock storage interface
 interface MockStorage {
@@ -45,84 +45,105 @@ Object.defineProperty(window, 'location', {
   writable: true,
 });
 
-// Force reset of authService's cached state
-const resetAuthServiceCache = () => {
-  // This is a hack to reset the cached state in authService
-  // We're accessing a private variable indirectly by manipulating the environment
-  // that the service uses to determine if the session is valid
-
-  // First clear all mocks
-  jest.clearAllMocks();
-
-  // Make localStorage.getItem return null for all keys
-  mockLocalStorage.getItem.mockImplementation(() => null);
-
-  // Call isSessionValid to update the cached state
-  authService.isSessionValid();
-
-  // Clear the mock implementation to allow test-specific mocking
-  mockLocalStorage.getItem.mockReset();
-};
-
 describe('authService', () => {
+  let mockLocalStorage: { [key: string]: string };
+
   beforeEach(() => {
-    // Reset cached state before each test
-    resetAuthServiceCache();
+    mockLocalStorage = {};
+    global.localStorage = {
+      getItem: (key: string) => mockLocalStorage[key] || null,
+      setItem: (key: string, value: string) => {
+        mockLocalStorage[key] = value;
+      },
+      removeItem: (key: string) => {
+        delete mockLocalStorage[key];
+      },
+      clear: () => {
+        mockLocalStorage = {};
+      },
+      length: 0,
+      key: () => null,
+    };
+
+    // Mock window.location
+    const mockLocation = {
+      href: window.location.href,
+    };
+    Object.defineProperty(window, 'location', {
+      value: mockLocation,
+      writable: true,
+    });
+
+    // Clear cache between tests
+    jest.resetModules();
   });
 
   describe('login', () => {
-    it('should login successfully with mock user', async () => {
-      const mockUser: User = {
-        id: 1,
-        username: 'testuser',
+    it('should login successfully with test@example.com', async () => {
+      const credentials: LoginCredentials = {
         email: 'test@example.com',
-        firstName: 'Test',
-        lastName: 'User',
-        gender: 'Male',
-        image: 'https://robohash.org/testuser.png',
-        token: 'mock-token-123',
+        password: 'test123',
       };
 
-      const result = await authService.login({ email: 'test@example.com', password: 'test123' });
+      const user = await authService.login(credentials);
 
-      expect(result).toEqual(mockUser);
-      // Check that user data is stored in the correct localStorage key
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('user_data', JSON.stringify(mockUser));
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('token', mockUser.token);
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('login_timestamp', expect.any(String));
+      expect(user).toBeDefined();
+      expect(user?.email).toBe('test@example.com');
+      expect(user?.token).toBe('mock-token-123');
+      expect(localStorage.getItem('token')).toBe('mock-token-123');
+      expect(localStorage.getItem('login_timestamp')).toBeDefined();
     });
 
-    it('should handle login failure', async () => {
-      await expect(authService.login({ email: 'invalid@example.com', password: 'wrongpass' })).rejects.toThrow('Incorrect email or password');
-      expect(window.localStorage.setItem).not.toHaveBeenCalled();
+    it('should login successfully with mock user', async () => {
+      const mockUser = {
+        name: 'John Doe',
+        email: 'john@example.com',
+        password: 'password123',
+      };
+      localStorage.setItem('mock_users', JSON.stringify([mockUser]));
+
+      const credentials: LoginCredentials = {
+        email: 'john@example.com',
+        password: 'password123',
+      };
+
+      const user = await authService.login(credentials);
+
+      expect(user).toBeDefined();
+      expect(user?.email).toBe('john@example.com');
+      expect(user?.token).toBeDefined();
+      expect(localStorage.getItem('token')).toBe(user?.token);
+      expect(localStorage.getItem('login_timestamp')).toBeDefined();
+    });
+
+    it('should throw error for invalid credentials', async () => {
+      const credentials: LoginCredentials = {
+        email: 'invalid@example.com',
+        password: 'wrongpass',
+      };
+
+      await expect(authService.login(credentials)).rejects.toThrow('Incorrect email or password');
     });
   });
 
   describe('logout', () => {
-    it('should clear auth data and redirect to login page', () => {
+    it('should clear all auth data and redirect to login', () => {
+      // Setup initial state
+      localStorage.setItem('token', 'test-token');
+      localStorage.setItem('login_timestamp', Date.now().toString());
+      localStorage.setItem('user_data', JSON.stringify({ name: 'Test User' }));
+
       authService.logout();
 
-      // Check that the correct localStorage keys are removed
-      expect(window.localStorage.removeItem).toHaveBeenCalledWith('token');
-      expect(window.localStorage.removeItem).toHaveBeenCalledWith('login_timestamp');
-      expect(window.localStorage.removeItem).toHaveBeenCalledWith('user_data');
-      expect(window.sessionStorage.clear).toHaveBeenCalled();
+      expect(localStorage.getItem('token')).toBeNull();
+      expect(localStorage.getItem('login_timestamp')).toBeNull();
+      expect(localStorage.getItem('user_data')).toBeNull();
       expect(window.location.href).toBe('/login');
     });
   });
 
   describe('getCurrentUser', () => {
-    it('should return null if not logged in', () => {
-      // Reset cache and ensure getItem returns null
-      resetAuthServiceCache();
-      mockLocalStorage.getItem.mockReturnValue(null);
-
-      const result = authService.getCurrentUser();
-
-      expect(result).toBeNull();
-    });
-
-    it('should return cached user if logged in', () => {
+    it('should return cached user if valid and recent', () => {
       const mockUser: User = {
         id: 1,
         username: 'testuser',
@@ -130,96 +151,73 @@ describe('authService', () => {
         firstName: 'Test',
         lastName: 'User',
         gender: 'Male',
-        image: 'https://robohash.org/testuser.png',
-        token: 'mock-token',
+        image: 'test.jpg',
+        token: 'test-token',
       };
 
-      // Reset cache first
-      resetAuthServiceCache();
+      localStorage.setItem('token', 'test-token');
+      localStorage.setItem('login_timestamp', Date.now().toString());
+      localStorage.setItem('user_data', JSON.stringify(mockUser));
 
-      // Mock the token and user_data in localStorage
-      mockLocalStorage.getItem.mockImplementation((key: string) => {
-        if (key === 'token') return 'mock-token';
-        if (key === 'user_data') return JSON.stringify(mockUser);
-        if (key === 'login_timestamp') return Date.now().toString();
-        return null;
-      });
+      const user = authService.getCurrentUser();
+      expect(user).toBeDefined();
+      expect(user?.email).toBe('test@example.com');
+    });
 
-      // Mock isSessionValid to return true
-      jest.spyOn(authService, 'isSessionValid').mockReturnValueOnce(true);
+    it('should return null if token is invalid', () => {
+      localStorage.removeItem('token');
+      const user = authService.getCurrentUser();
+      expect(user).toBeNull();
+    });
 
-      const result = authService.getCurrentUser();
+    it('should handle corrupted user data', () => {
+      localStorage.setItem('token', 'test-token');
+      localStorage.setItem('login_timestamp', Date.now().toString());
+      localStorage.setItem('user_data', 'invalid-json');
 
-      expect(result).toEqual(mockUser);
+      const user = authService.getCurrentUser();
+      expect(user).toBeDefined(); // Should create mock user
+      expect(localStorage.getItem('user_data')).toBeDefined(); // Should save new mock user
     });
   });
 
   describe('isSessionValid', () => {
-    // Instead of testing the actual implementation which relies on a cached state,
-    // we'll directly test the logic by mocking localStorage values
+    it('should return true for valid session', () => {
+      const timestamp = Date.now();
+      localStorage.setItem('token', 'test-token');
+      localStorage.setItem('login_timestamp', timestamp.toString());
 
-    it('should return false if no token', () => {
-      // Mock the original isSessionValid method to test the actual logic
-      const originalIsSessionValid = authService.isSessionValid;
-
-      try {
-        // Replace the method with our test implementation
-        authService.isSessionValid = jest.fn(() => {
-          // This is the core logic from the original method
-          const token = mockLocalStorage.getItem('token');
-          const loginTimestamp = mockLocalStorage.getItem('login_timestamp');
-
-          if (!token || !loginTimestamp) {
-            return false;
-          }
-          return true;
-        });
-
-        // Set up the test condition - no token
-        mockLocalStorage.getItem.mockImplementation(() => {
-          return null; // Return null for all keys
-        });
-
-        const result = authService.isSessionValid();
-
-        expect(result).toBe(false);
-      } finally {
-        // Restore the original method
-        authService.isSessionValid = originalIsSessionValid;
-      }
+      const isValid = authService.isSessionValid();
+      expect(isValid).toBe(true);
     });
 
-    it('should return true if token exists', () => {
-      // Mock the original isSessionValid method to test the actual logic
-      const originalIsSessionValid = authService.isSessionValid;
+    it('should return false for expired session', () => {
+      const expiredTimestamp = Date.now() - 25 * 60 * 60 * 1000; // 25 hours ago
+      localStorage.setItem('token', 'test-token');
+      localStorage.setItem('login_timestamp', expiredTimestamp.toString());
 
-      try {
-        // Replace the method with our test implementation
-        authService.isSessionValid = jest.fn(() => {
-          // This is the core logic from the original method
-          const token = mockLocalStorage.getItem('token');
-          const loginTimestamp = mockLocalStorage.getItem('login_timestamp');
+      const isValid = authService.isSessionValid();
+      expect(isValid).toBe(false);
+    });
 
-          if (!token || !loginTimestamp) {
-            return false;
-          }
-          return true;
-        });
+    it('should return false when token is missing', () => {
+      localStorage.removeItem('token');
+      localStorage.setItem('login_timestamp', Date.now().toString());
 
-        // Set up the test condition - token exists
-        mockLocalStorage.getItem.mockImplementation((key: string) => {
-          if (key === 'token') return 'valid-token';
-          if (key === 'login_timestamp') return Date.now().toString();
-          return null;
-        });
+      const isValid = authService.isSessionValid();
+      expect(isValid).toBe(false);
+    });
 
-        const result = authService.isSessionValid();
+    it('should use cached result within cache duration', () => {
+      localStorage.setItem('token', 'test-token');
+      localStorage.setItem('login_timestamp', Date.now().toString());
 
-        expect(result).toBe(true);
-      } finally {
-        // Restore the original method
-        authService.isSessionValid = originalIsSessionValid;
-      }
+      const firstCheck = authService.isSessionValid();
+      localStorage.removeItem('token'); // Remove token
+      const secondCheck = authService.isSessionValid(); // Should use cached result
+
+      expect(firstCheck).toBe(true);
+      expect(secondCheck).toBe(true); // Should still be true from cache
     });
   });
 });

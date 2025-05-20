@@ -112,129 +112,104 @@ const authService = {
   },
 
   getCurrentUser: () => {
-    const now = new Date().getTime();
-    if (cachedAuthState.user && cachedAuthState.isValid && now - cachedAuthState.lastChecked < CACHE_DURATION) {
-      console.log('Using user information from cache:', cachedAuthState.user);
-      return cachedAuthState.user;
-    }
-
-    const token = localStorage.getItem('token');
-    const isValid = authService.isSessionValid();
-
-    if (!token || !isValid) {
-      console.log('Token does not exist or is invalid');
-
-      cachedAuthState = {
-        isValid: false,
-        lastChecked: now,
-        user: null,
-      };
-
-      return null;
-    }
-
     try {
-      const savedUserData = localStorage.getItem(USER_DATA_KEY);
-
-      if (savedUserData) {
-        try {
-          const userData = JSON.parse(savedUserData) as User;
-          console.log('Fetched user information from localStorage:', userData);
-
-          cachedAuthState = {
-            isValid: true,
-            lastChecked: now,
-            user: userData,
-          };
-
-          return userData;
-        } catch (e) {
-          console.error('Error parsing user data:', e);
-          localStorage.removeItem(USER_DATA_KEY);
-        }
+      // Check if we have a cached user
+      if (cachedAuthState.user && cachedAuthState.isValid && new Date().getTime() - cachedAuthState.lastChecked < CACHE_DURATION) {
+        console.log('Using user information from cache:', cachedAuthState.user);
+        return cachedAuthState.user;
       }
 
-      console.log('No user data found, create sample data');
-      const mockUser: User = {
-        id: 1,
-        username: 'testuser',
-        email: 'test@example.com',
-        firstName: 'Test',
-        lastName: 'User',
-        gender: 'Male',
-        image: 'https://robohash.org/testuser.png',
-        token: token,
-      };
+      // Get token from localStorage
+      const token = localStorage.getItem('token');
+      if (!token || !validateToken(token)) {
+        console.log('Token does not exist or is invalid');
+        return null;
+      }
 
-      localStorage.setItem(USER_DATA_KEY, JSON.stringify(mockUser));
+      // Get user data from localStorage
+      const userStr = localStorage.getItem(USER_DATA_KEY);
+      if (!userStr) {
+        console.log('User data not found in localStorage');
+        return null;
+      }
 
-      cachedAuthState = {
-        isValid: true,
-        lastChecked: now,
-        user: mockUser,
-      };
+      try {
+        const user = JSON.parse(userStr) as User;
+        if (!authService.isValidUser(user)) {
+          console.log('Invalid user data format');
+          return null;
+        }
 
-      return mockUser;
+        cachedAuthState = {
+          isValid: true,
+          lastChecked: new Date().getTime(),
+          user: user,
+        };
+        console.log('Fetched user information from localStorage:', user);
+        return user;
+      } catch {
+        console.log('Failed to parse user data');
+        return null;
+      }
     } catch (error) {
-      console.error('Error getting current user information:', error);
-
-      cachedAuthState = {
-        isValid: false,
-        lastChecked: now,
-        user: null,
-      };
-
+      console.error('Error in getCurrentUser:', error);
       return null;
     }
   },
 
   isSessionValid: () => {
-    const now = new Date().getTime();
-    if (now - cachedAuthState.lastChecked < CACHE_DURATION) {
-      console.log('Using session check results from cache:', cachedAuthState.isValid);
-      return cachedAuthState.isValid;
-    }
+    try {
+      // Check if we have a cached result
+      if (cachedAuthState.isValid && new Date().getTime() - cachedAuthState.lastChecked < CACHE_DURATION) {
+        console.log('Using session check results from cache:', cachedAuthState.isValid);
+        return cachedAuthState.isValid;
+      }
 
-    const token = localStorage.getItem('token');
-    const loginTimestamp = localStorage.getItem('login_timestamp');
+      // Get token from localStorage
+      const token = localStorage.getItem('token');
+      const loginTime = localStorage.getItem('login_timestamp');
 
-    if (!token || !loginTimestamp) {
-      console.log('Token or timestamp does not exist, invalid login session');
+      if (!token || !loginTime) {
+        console.log('Token or timestamp does not exist, invalid login session');
+        cachedAuthState.isValid = false;
+        cachedAuthState.lastChecked = new Date().getTime();
+        return false;
+      }
 
-      cachedAuthState.isValid = false;
+      // Validate token format and expiration
+      if (!validateToken(token)) {
+        console.log('Token validation failed');
+        cachedAuthState.isValid = false;
+        cachedAuthState.lastChecked = new Date().getTime();
+        return false;
+      }
+
+      // Check login time
+      const loginDate = parseInt(loginTime, 10);
+      const now = new Date().getTime();
+      const timeElapsed = now - loginDate;
+      const sessionTimeout = TOKEN_LIFETIME;
+
+      const isValid = timeElapsed < sessionTimeout;
+      cachedAuthState.isValid = isValid;
       cachedAuthState.lastChecked = now;
 
+      // Log session details
+      console.log('Checking login session:', {
+        isValid,
+        now: new Date(now).toLocaleString(),
+        loginTime: new Date(loginDate).toLocaleString(),
+        timeElapsed: `${Math.floor(timeElapsed / 60000)} phút`,
+        timeRemaining: `${Math.floor((sessionTimeout - timeElapsed) / 60000)} phút`,
+      });
+
+      return isValid;
+    } catch (error) {
+      console.error('Error checking session validity:', error);
+      cachedAuthState.isValid = false;
+      cachedAuthState.lastChecked = new Date().getTime();
       return false;
     }
-
-    const tokenDate = parseInt(loginTimestamp, 10);
-    const isValid = now - tokenDate < TOKEN_LIFETIME;
-
-    console.log('Checking login session:', {
-      isValid,
-      now: new Date(now).toLocaleString(),
-      loginTime: new Date(tokenDate).toLocaleString(),
-      timeElapsed: (now - tokenDate) / 1000 / 60 + ' phút',
-      timeRemaining: (TOKEN_LIFETIME - (now - tokenDate)) / 1000 / 60 + ' phút',
-    });
-
-    if (!isValid) {
-      console.log('Token expired. Current time:', new Date(now).toLocaleString(), 'Login time:', new Date(tokenDate).toLocaleString());
-      localStorage.removeItem('token');
-      localStorage.removeItem('login_timestamp');
-      localStorage.removeItem(USER_DATA_KEY);
-    }
-
-    const cookieToken = authService.getTokenFromCookie();
-    if (cookieToken && !validateToken(cookieToken)) {
-      console.log('JWT validation failed');
-      return false;
-    }
-
-    cachedAuthState.isValid = isValid;
-    cachedAuthState.lastChecked = now;
-
-    return isValid;
   },
 
   getTokenFromCookie: (): string | null => {
@@ -364,6 +339,21 @@ const authService = {
       console.error('Cannot logout other sessions:', error);
       return false;
     }
+  },
+
+  isValidUser: (user: User): boolean => {
+    // Check required fields
+    if (!user.id || !user.username || !user.email || !user.firstName || !user.lastName) {
+      return false;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(user.email)) {
+      return false;
+    }
+
+    return true;
   },
 };
 

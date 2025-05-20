@@ -7,7 +7,6 @@ import { useAppSelector } from '../store';
 
 // Lazy load public pages
 const Home = React.lazy(() => import('../pages/Home'));
-const TodoPage = React.lazy(() => import('../pages/TodoPage'));
 const ErrorPage = React.lazy(() => import('../pages/error-pages/404Error'));
 
 // Lazy load dashboard and account pages
@@ -87,16 +86,6 @@ const AppRoutes: React.FC = () => {
           <Route path="security" element={<Security />} />
           <Route path="edit" element={<EditProfile />} />
         </Route>
-
-        {/* --- Todo Example --- */}
-        <Route
-          path="/todo"
-          element={
-            <PrivateRoute>
-              <TodoPage />
-            </PrivateRoute>
-          }
-        />
 
         {/* --- Catch-all Route (404) --- */}
         <Route path="*" element={<ErrorPage />} />

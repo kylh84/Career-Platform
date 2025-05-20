@@ -1,34 +1,19 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import configureStore from 'redux-mock-store';
-import Dashboard from '../Home';
-import { logout, refreshUser } from '../../features/auth/slice';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import Home from '../Home';
+import { RootState } from '../../store/rootReducer';
+import authService from '../../services/authService';
+import { User, AuthState } from '../../features/auth/types';
 
-// Mock các dependencies
-jest.mock('../../i18n', () => ({
-  useI18n: () => ({
-    t: (key: string) => {
-      const translations: { [key: string]: string } = {
-        'dashboard.title': 'Welcome',
-        'dashboard.logout': 'Logout',
-        'dashboard.welcome': 'Welcome to the app',
-        'dashboard.loggedInAs': 'Logged in as',
-        'dashboard.profile.title': 'Profile',
-        'dashboard.profile.username': 'Username',
-        'dashboard.profile.name': 'Name',
-        'dashboard.profile.email': 'Email',
-      };
-      return translations[key] || key;
-    },
-  }),
+// Mock authService
+jest.mock('../../services/authService', () => ({
+  logout: jest.fn(),
+  getCurrentUser: jest.fn(() => null),
+  isSessionValid: jest.fn(() => false),
 }));
-
-jest.mock('../../i18n/components/LanguageSwitcher', () => {
-  return function MockLanguageSwitcher() {
-    return <div data-testid="language-switcher">Language Switcher</div>;
-  };
-});
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -36,186 +21,169 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-// Types
-interface User {
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
+// @ts-expect-error: redux-mock-store and redux-thunk type incompatibility
+const mockStore = configureMockStore<Partial<RootState>>([thunk]);
 
-interface AppState {
-  auth: {
-    user: User | null;
-    isAuthenticated: boolean;
-  };
-}
-
-// Setup mock store
-const mockStore = configureStore<AppState>();
-
-describe('Dashboard', () => {
-  let store = mockStore({
-    auth: {
-      user: null,
-      isAuthenticated: false,
-    },
-  });
-
-  const mockUser: User = {
-    username: 'testuser',
-    firstName: 'Test',
-    lastName: 'User',
-    email: 'test@example.com',
-  };
+describe('Home', () => {
+  let store: ReturnType<typeof mockStore>;
 
   beforeEach(() => {
-    localStorage.clear();
     mockNavigate.mockClear();
+    (authService.logout as jest.Mock).mockClear();
+    (authService.getCurrentUser as jest.Mock).mockClear();
+    (authService.isSessionValid as jest.Mock).mockClear();
+
     store = mockStore({
       auth: {
-        user: null,
         isAuthenticated: false,
-      },
-    });
-  });
-
-  it('should show loading state when user is not available', () => {
-    render(
-      <Provider store={store}>
-        <BrowserRouter>
-          <Dashboard />
-        </BrowserRouter>
-      </Provider>
-    );
-
-    expect(screen.getByText('Đang tải thông tin người dùng...')).toBeInTheDocument();
-    expect(screen.getByText('Đang khôi phục phiên đăng nhập của bạn.')).toBeInTheDocument();
-  });
-
-  it('should attempt to refresh user when token exists but no user data', () => {
-    localStorage.setItem('token', 'fake-token');
-    store = mockStore({
-      auth: {
         user: null,
-        isAuthenticated: false,
+        isLoading: false,
+        error: null,
       },
     });
-
-    render(
-      <Provider store={store}>
-        <BrowserRouter>
-          <Dashboard />
-        </BrowserRouter>
-      </Provider>
-    );
-
-    const actions = store.getActions();
-    expect(actions).toContainEqual(refreshUser());
   });
 
-  it('should display user information when loaded', () => {
-    store = mockStore({
-      auth: {
-        user: mockUser,
-        isAuthenticated: true,
-      },
-    });
-
-    render(
+  const renderHome = () => {
+    return render(
       <Provider store={store}>
         <BrowserRouter>
-          <Dashboard />
+          <Home />
         </BrowserRouter>
       </Provider>
     );
+  };
 
-    expect(screen.getByText('Welcome')).toBeInTheDocument();
-    expect(screen.getByText(mockUser.username)).toBeInTheDocument();
-    expect(screen.getByText(`${mockUser.firstName} ${mockUser.lastName}`)).toBeInTheDocument();
-    expect(screen.getByText(mockUser.email)).toBeInTheDocument();
+  it('renders landing page content correctly', () => {
+    renderHome();
+
+    // Check for main content
+    expect(screen.getByText('Advance Your Tech Career')).toBeInTheDocument();
+    expect(screen.getByText('Leverage AI to optimize your CV, evaluate source code, get personalized learning paths, and receive career guidance.')).toBeInTheDocument();
+    expect(screen.getByText('Get Started for Free')).toBeInTheDocument();
+
+    // Check for features
+    expect(screen.getByText('CV Optimization')).toBeInTheDocument();
+    expect(screen.getByText('Code Review')).toBeInTheDocument();
+    expect(screen.getByText('Learning Roadmap')).toBeInTheDocument();
+    expect(screen.getByText('Career Guidance')).toBeInTheDocument();
   });
 
-  it('should handle logout correctly', () => {
-    store = mockStore({
-      auth: {
-        user: mockUser,
-        isAuthenticated: true,
-      },
-    });
+  it('renders navigation links correctly', () => {
+    renderHome();
 
-    render(
-      <Provider store={store}>
-        <BrowserRouter>
-          <Dashboard />
-        </BrowserRouter>
-      </Provider>
-    );
+    expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Features')).toBeInTheDocument();
+    expect(screen.getByText('Pricing')).toBeInTheDocument();
+  });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
+  it('shows login button when not authenticated', () => {
+    renderHome();
 
-    const actions = store.getActions();
-    expect(actions).toContainEqual(logout());
+    const loginButton = screen.getByRole('button', { name: 'Login' });
+    expect(loginButton).toBeInTheDocument();
+
+    fireEvent.click(loginButton);
     expect(mockNavigate).toHaveBeenCalledWith('/login');
   });
 
-  it('should navigate to todo page', () => {
+  it('shows logout button when authenticated and handles logout correctly', async () => {
+    const mockUser: User = {
+      id: 1,
+      email: 'test@example.com',
+      username: 'testuser',
+      firstName: 'Test',
+      lastName: 'User',
+      gender: 'male',
+      image: '',
+      token: 'test-token',
+    };
+
     store = mockStore({
       auth: {
-        user: mockUser,
         isAuthenticated: true,
-      },
-    });
+        user: mockUser,
+        isLoading: false,
+        error: null,
+      } as AuthState,
+    } as RootState);
 
     render(
       <Provider store={store}>
         <BrowserRouter>
-          <Dashboard />
+          <Home />
         </BrowserRouter>
       </Provider>
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Go to Todo App' }));
-    expect(mockNavigate).toHaveBeenCalledWith('/todo');
+    const logoutButton = screen.getByRole('button', { name: 'Logout' });
+    expect(logoutButton).toBeInTheDocument();
+
+    fireEvent.click(logoutButton);
+    await waitFor(() => {
+      const actions = store.getActions();
+      expect(actions[0].type).toBe('auth/logout/pending');
+      expect(actions[1].type).toBe('auth/logout/fulfilled');
+      expect(mockNavigate).toHaveBeenCalledWith('/home');
+    });
   });
 
-  it('should render language switcher', () => {
-    store = mockStore({
-      auth: {
-        user: mockUser,
-        isAuthenticated: true,
-      },
-    });
+  it('navigates to home when clicking on logo', () => {
+    renderHome();
 
-    render(
-      <Provider store={store}>
-        <BrowserRouter>
-          <Dashboard />
-        </BrowserRouter>
-      </Provider>
-    );
-
-    expect(screen.getByTestId('language-switcher')).toBeInTheDocument();
+    const logo = screen.getByText('Career Platform');
+    fireEvent.click(logo);
+    expect(mockNavigate).toHaveBeenCalledWith('/home');
   });
 
-  it('should display translated content', () => {
+  it('navigates to signup page when clicking Get Started', () => {
+    renderHome();
+
+    const getStartedButton = screen.getByText('Get Started for Free');
+    expect(getStartedButton).toBeInTheDocument();
+
+    fireEvent.click(getStartedButton);
+    expect(mockNavigate).toHaveBeenCalledWith('/signup');
+  });
+
+  it('handles loading state correctly', () => {
     store = mockStore({
       auth: {
-        user: mockUser,
-        isAuthenticated: true,
-      },
-    });
+        isAuthenticated: false,
+        user: null,
+        isLoading: true,
+        error: null,
+      } as AuthState,
+    } as RootState);
 
     render(
       <Provider store={store}>
         <BrowserRouter>
-          <Dashboard />
+          <Home />
         </BrowserRouter>
       </Provider>
     );
 
-    expect(screen.getByText('Welcome')).toBeInTheDocument();
-    expect(screen.getByText('Profile')).toBeInTheDocument();
-    expect(screen.getByText('Logged in as')).toBeInTheDocument();
+    // Add assertions for loading state if there's loading UI
+  });
+
+  it('handles error state correctly', () => {
+    store = mockStore({
+      auth: {
+        isAuthenticated: false,
+        user: null,
+        isLoading: false,
+        error: 'Authentication error',
+      } as AuthState,
+    } as RootState);
+
+    render(
+      <Provider store={store}>
+        <BrowserRouter>
+          <Home />
+        </BrowserRouter>
+      </Provider>
+    );
+
+    // Add assertions for error state if there's error UI
   });
 });

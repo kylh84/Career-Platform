@@ -38,3 +38,59 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 });
+
+// Mock IntersectionObserver
+class IntersectionObserverMock {
+  observe = jest.fn();
+  unobserve = jest.fn();
+  disconnect = jest.fn();
+}
+
+Object.defineProperty(window, 'IntersectionObserver', {
+  writable: true,
+  value: IntersectionObserverMock,
+});
+
+// Mock ResizeObserver
+class ResizeObserverMock {
+  observe = jest.fn();
+  unobserve = jest.fn();
+  disconnect = jest.fn();
+}
+
+Object.defineProperty(window, 'ResizeObserver', {
+  writable: true,
+  value: ResizeObserverMock,
+});
+
+// Console error and warning mocks
+const originalError = console.error;
+const originalWarn = console.warn;
+
+type ConsoleArgs = string | Error | unknown;
+
+beforeAll(() => {
+  console.error = (...args: ConsoleArgs[]) => {
+    if (typeof args[0] === 'string' && args[0].includes('Warning: ReactDOM.render is no longer supported')) {
+      return;
+    }
+    originalError.call(console, ...args);
+  };
+
+  console.warn = (...args: ConsoleArgs[]) => {
+    if ((typeof args[0] === 'string' && args[0].includes('componentWillReceiveProps')) || (typeof args[0] === 'string' && args[0].includes('componentWillMount'))) {
+      return;
+    }
+    originalWarn.call(console, ...args);
+  };
+});
+
+afterAll(() => {
+  console.error = originalError;
+  console.warn = originalWarn;
+});
+
+// Clear all mocks after each test
+afterEach(() => {
+  jest.clearAllMocks();
+});
