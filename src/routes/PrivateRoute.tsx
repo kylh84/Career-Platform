@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import authService from '../services/authService';
 import { setAuthenticated, refreshUser } from '../features/auth/slice';
-import { useToast } from '../hooks/useToast.hook';
+import { useToast } from '../hooks/ui/toast';
 import { RootState } from '../store/rootReducer';
 import { useAppDispatch } from '../store';
 

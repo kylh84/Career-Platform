@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector } from '../../../store';
 import LoginForm from '../components/LoginForm';
-import { useToast } from '../../../hooks/useToast.hook';
+import { useToast } from '../../../hooks/ui/toast';
 
 interface LocationState {
   from?: {

@@ -3,7 +3,7 @@ import { BrowserRouter, useLocation } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store';
 import AppRoutes from './routes/AppRoutes';
-import { ToastProvider } from './hooks/useToast';
+import { ToastProvider } from './hooks/ui/toast';
 import { I18nProvider } from './i18n';
 import './index.css';
 

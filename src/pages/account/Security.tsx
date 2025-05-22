@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button } from '../../../components/common';
-import { useAppSelector } from '../../../store';
+import { Button } from '../../components/common';
+import { useAppSelector } from '../../store';
 
 type MockUser = {
   email: string;

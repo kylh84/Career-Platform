@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { FiUser, FiLock, FiEye, FiEyeOff, FiAlertCircle } from 'react-icons/fi';
 import { useAppSelector, useAppDispatch } from '../../../store';
-import { useToast } from '../../../hooks/useToast.hook';
+import { useToast } from '../../../hooks/ui/toast';
 import { login, resetAuthState } from '../slice';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';

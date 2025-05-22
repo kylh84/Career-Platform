@@ -1,6 +1,8 @@
+import React from 'react';
 import { renderHook, act } from '@testing-library/react';
-import { useToast } from '../useToast.hook';
-import { ToastProvider } from '../useToast';
+import '@testing-library/jest-dom';
+import { useToast } from './useToast.hook';
+import { ToastProvider } from './useToast';
 
 describe('useToast', () => {
   beforeEach(() => {

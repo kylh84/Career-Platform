@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import useEventListener from '../useEventListener';
+import useEventListener from './useEventListener';
 
 describe('useEventListener', () => {
   // Create spies instead of mocks

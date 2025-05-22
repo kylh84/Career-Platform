@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { FiUser, FiLock, FiMail, FiEye, FiEyeOff } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import authService from '../../../services/authService';
-import { useToast } from '../../../hooks/useToast.hook';
+import { useToast } from '../../../hooks/ui/toast';
 
 interface SignUpData {
   name: string;

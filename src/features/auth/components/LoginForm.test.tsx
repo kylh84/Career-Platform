@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { ToastProvider } from '../../../hooks/useToast';
+import { ToastProvider } from '../../../hooks/ui/toast';
 import LoginForm from './LoginForm';
 import store from '../../../store';
 

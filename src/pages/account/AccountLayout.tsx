@@ -1,9 +1,9 @@
 import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import { FaUser, FaCreditCard, FaShieldCat, FaArrowUpRightFromSquare, FaRightFromBracket } from 'react-icons/fa6';
-import { useAppSelector, useAppDispatch } from '../../../store';
-import { Button } from '../../../components/common';
-import { logout } from '../../../features/auth/slice';
+import { useAppSelector, useAppDispatch } from '../../store';
+import { Button } from '../../components/common';
+import { logout } from '../../features/auth/slice';
 import { useNavigate } from 'react-router-dom';
 
 const accountMenu = [

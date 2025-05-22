@@ -1,6 +1,6 @@
 import React from 'react';
-import { useAppSelector } from '../../../store';
-import { Button } from '../../../components/common';
+import { useAppSelector } from '../../store';
+import { Button } from '../../components/common';
 import { useNavigate } from 'react-router-dom';
 
 const Profile: React.FC = () => {

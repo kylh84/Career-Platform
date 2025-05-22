@@ -6,23 +6,23 @@ import PrivateRoute from './PrivateRoute';
 import { useAppSelector } from '../store';
 
 // Lazy load public pages
-const Home = React.lazy(() => import('../pages/Home'));
+const Home = React.lazy(() => import('../pages/home/Home'));
 const ErrorPage = React.lazy(() => import('../pages/error-pages/404Error'));
 
 // Lazy load dashboard and account pages
 const DashboardLayout = React.lazy(() => import('../pages/dashboard/DashboardLayout'));
 const DashboardHome = React.lazy(() => import('../pages/dashboard/DashboardHome'));
-const CVOptimizationPage = React.lazy(() => import('../pages/dashboard/CVOptimizationPage'));
-const CodePage = React.lazy(() => import('../pages/dashboard/CodePage'));
-const CVSuggestionPage = React.lazy(() => import('../pages/dashboard/CVSuggestionPage'));
-const RoadmapPage = React.lazy(() => import('../pages/dashboard/RoadmapPage'));
-const CareerPage = React.lazy(() => import('../pages/dashboard/CareerPage'));
+const CVOptimizationPage = React.lazy(() => import('../pages/career/CVOptimizationPage'));
+const CodePage = React.lazy(() => import('../pages/career/CodePage'));
+const CVSuggestionPage = React.lazy(() => import('../pages/career/CVSuggestionPage'));
+const RoadmapPage = React.lazy(() => import('../pages/career/RoadmapPage'));
+const CareerPage = React.lazy(() => import('../pages/career/CareerPage'));
 const UpgradePage = React.lazy(() => import('../pages/dashboard/UpgradePage'));
-const AccountLayout = React.lazy(() => import('../pages/dashboard/account/AccountLayout'));
-const Profile = React.lazy(() => import('../pages/dashboard/account/Profile'));
-const Subscription = React.lazy(() => import('../pages/dashboard/account/Subscription'));
-const Security = React.lazy(() => import('../pages/dashboard/account/Security'));
-const EditProfile = React.lazy(() => import('../pages/dashboard/account/EditProfile'));
+const AccountLayout = React.lazy(() => import('../pages/account/AccountLayout'));
+const Profile = React.lazy(() => import('../pages/account/Profile'));
+const Subscription = React.lazy(() => import('../pages/account/Subscription'));
+const Security = React.lazy(() => import('../pages/account/Security'));
+const EditProfile = React.lazy(() => import('../pages/account/EditProfile'));
 
 const LoadingScreen = ({ message }: { message: string }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
