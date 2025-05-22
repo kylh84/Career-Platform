@@ -1,12 +1,12 @@
 import React from 'react';
-import { Button } from '../components/common';
-import { useAppSelector, useAppDispatch } from '../store';
-import { logout } from '../features/auth/slice';
+import { Button } from '../../components/common';
+import { useAppSelector, useAppDispatch } from '../../store';
+import { logout } from '../../features/auth/slice';
 import { useNavigate, NavLink } from 'react-router-dom';
-import roadmapIcon from '../assets/icons/roadmap.png';
-import cvcheckIcon from '../assets/icons/cv-check.png';
-import codereviewIcon from '../assets/icons/code-review.png';
-import targetIcon from '../assets/icons/target.png';
+import roadmapIcon from '../../assets/icons/roadmap.png';
+import cvcheckIcon from '../../assets/icons/cv-check.png';
+import codereviewIcon from '../../assets/icons/code-review.png';
+import targetIcon from '../../assets/icons/target.png';
 
 const Header: React.FC = () => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
