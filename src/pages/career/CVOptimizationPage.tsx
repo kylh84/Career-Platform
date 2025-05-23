@@ -33,19 +33,19 @@ const CVOptimizationPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-50 py-10 ">
-      <div className="max-w-3xl w-full">
-        <h2 className="text-3xl font-bold mb-8 text-gray-900 text-left">Evaluate a CV</h2>
+    <div className="flex flex-col items-center min-h-screen bg-gray-50 py-6 sm:py-8 md:py-10 px-4 sm:px-6">
+      <div className="w-full max-w-3xl">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 md:mb-8 text-gray-900 text-left">Evaluate a CV</h2>
         {/* Card input */}
-        <form onSubmit={handleEvaluate} className="bg-white rounded-xl shadow border border-gray-200 max-w-3xl w-full mb-6">
-          <div className="flex flex-col md:flex-row gap-0 md:gap-4 p-6">
+        <form onSubmit={handleEvaluate} className="bg-white rounded-lg sm:rounded-xl shadow border border-gray-200 w-full mb-4 sm:mb-6">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6 p-4 sm:p-6">
             {/* CV Upload */}
             <div className="flex-1 flex flex-col">
-              <label className="block font-medium mb-2 w-full text-lg">CV</label>
-              <div className="flex-1 flex flex-col items-center justify-center border border-gray-200  rounded-lg p-6 mr-0 md:mr-2 mb-4 md:mb-0 bg-gray-50">
-                <label htmlFor="cv-upload" className="flex flex-col items-center justify-center w-full h-24 cursor-pointer">
-                  <FaRegFilePdf className="text-8xl text-gray-400 mb-2" />
-                  <span className="text-gray-500 text-sm">Upload PDF or text file</span>
+              <label className="block font-medium mb-2 w-full text-base sm:text-lg">CV</label>
+              <div className="flex-1 flex flex-col items-center justify-center border border-gray-200 rounded-lg p-4 sm:p-6 bg-gray-50">
+                <label htmlFor="cv-upload" className="flex flex-col items-center justify-center w-full h-20 sm:h-24 cursor-pointer">
+                  <FaRegFilePdf className="text-6xl sm:text-8xl text-gray-400 mb-2" />
+                  <span className="text-gray-500 text-xs sm:text-sm">Upload PDF or text file</span>
                   <input id="cv-upload" ref={fileInputRef} type="file" accept=".pdf,.txt" className="hidden" onChange={handleFileChange} />
                   {fileName && <span className="mt-2 text-xs text-gray-700 truncate max-w-full">{fileName}</span>}
                 </label>
@@ -53,12 +53,12 @@ const CVOptimizationPage: React.FC = () => {
             </div>
             {/* JD Input */}
             <div className="flex-1 flex flex-col">
-              <label className="block font-medium mb-2 text-lg">Job Description</label>
-              <textarea className="block w-full border border-gray-200 rounded-lg px-3 py-2 h-36 resize-none bg-gray-50" />
+              <label className="block font-medium mb-2 text-base sm:text-lg">Job Description</label>
+              <textarea className="block w-full border border-gray-200 rounded-lg px-3 py-2 h-32 sm:h-36 resize-none bg-gray-50" />
             </div>
           </div>
-          <div className="px-6 pb-6">
-            <button type="submit" className="w-1/2 py-2.5 px-4 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium text-lg relative" disabled={isEvaluating}>
+          <div className="px-4 sm:px-6 pb-4 sm:pb-6">
+            <button type="submit" className="w-full sm:w-1/2 py-2.5 px-4 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium text-base sm:text-lg relative" disabled={isEvaluating}>
               {isEvaluating ? (
                 <>
                   <span className="opacity-0">Evaluate</span>
@@ -77,10 +77,10 @@ const CVOptimizationPage: React.FC = () => {
         </form>
         {/* Result */}
         <div className={`transition-all duration-500 ease-in-out ${result ? 'opacity-100 max-h-[1000px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
-          <div className="flex flex-col md:flex-row gap-4 max-w-3xl w-full transform transition-transform duration-500 ease-in-out">
+          <div className="flex flex-col md:flex-row gap-4 w-full transform transition-transform duration-500 ease-in-out">
             {/* AI Feedback */}
-            <div className="flex-1 bg-white rounded-xl shadow border border-gray-200 p-6">
-              <div className="font-semibold mb-2 text-lg">AI Feedback</div>
+            <div className="flex-1 bg-white rounded-lg sm:rounded-xl shadow border border-gray-200 p-4 sm:p-6">
+              <div className="font-semibold mb-2 text-base sm:text-lg">AI Feedback</div>
               <div>
                 <div className="font-bold mb-1">Strengths</div>
                 <ul className="list-disc pl-5 mb-2">

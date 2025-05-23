@@ -12,28 +12,28 @@ const Subscription: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow p-8">
-      <h2 className="text-3xl font-bold mb-6 text-center">Subscription</h2>
+    <div className="max-w-md mx-auto bg-white rounded-lg sm:rounded-xl shadow p-4 sm:p-6 md:p-8">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center">Subscription</h2>
       <div className="mb-4">
-        <div className="font-semibold">
+        <div className="font-semibold text-sm sm:text-base">
           Current Plan: <span className="text-blue-700">{plan}</span>
         </div>
       </div>
-      <div className="mb-4">
-        <div>
+      <div className="mb-4 space-y-2">
+        <div className="text-sm sm:text-base">
           CV Usage:{' '}
           <span className="font-semibold">
             {cvUsage}/{cvLimit}
           </span>
         </div>
-        <div>
+        <div className="text-sm sm:text-base">
           Code Usage:{' '}
           <span className="font-semibold">
             {codeUsage}/{codeLimit}
           </span>
         </div>
       </div>
-      <Button variant="primary" className="w-full" onClick={() => navigate('/dashboard/upgrade')}>
+      <Button variant="primary" className="w-full text-sm sm:text-base" onClick={() => navigate('/dashboard/upgrade')}>
         Upgrade Plan
       </Button>
     </div>

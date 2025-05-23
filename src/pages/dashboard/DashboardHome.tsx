@@ -36,14 +36,29 @@ const DashboardHome: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
-      <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6 items-center justify-center mx-auto p-10 ">
+    <div className="p-4 sm:p-6 md:p-8">
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Dashboard</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
         {features.map((feature) => (
-          <div key={feature.title} className="bg-white cursor-pointer rounded-2xl shadow-lg p-2 flex flex-col border border-gray-100 min-h-[240px]" onClick={() => navigate(feature.path)}>
-            <img src={feature.icon} alt={feature.title} className="w-20 h-20 ml-4 mx-auto mb-2 mt-6" />
-            <div className="font-bold ml-4 text-xl mb-2">{feature.title}</div>
-            <div className="text-gray-600 ml-4 text-base">{feature.desc}</div>
+          <div
+            key={feature.title}
+            onClick={() => navigate(feature.path)}
+            className="bg-white cursor-pointer rounded-lg sm:rounded-xl md:rounded-2xl 
+              shadow-md hover:shadow-lg transition-shadow duration-300
+              p-4 sm:p-5 md:p-6
+              flex flex-col border border-gray-100 
+              min-h-[160px] sm:min-h-[200px] md:min-h-[220px]"
+          >
+            <div
+              className="w-12 h-12 xs:w-14 xs:h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 
+              flex items-center justify-center mb-3 sm:mb-4"
+            >
+              <img src={feature.icon} alt={feature.title} className="w-full h-full object-contain" />
+            </div>
+            <div className="flex-1 flex flex-col">
+              <h3 className="font-bold text-base sm:text-lg md:text-xl mb-2">{feature.title}</h3>
+              <p className="text-gray-600 text-sm sm:text-base">{feature.desc}</p>
+            </div>
           </div>
         ))}
       </div>

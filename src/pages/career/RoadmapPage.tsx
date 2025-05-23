@@ -23,21 +23,25 @@ const RoadmapPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-50 py-10">
-      <div className="max-w-6xl w-full">
-        <div className="rounded-t-xl bg-blue-900 px-8 py-4">
-          <h2 className="text-3xl font-bold text-white text-center">Learning Path Suggestion</h2>
+    <div className="flex flex-col items-center min-h-screen bg-gray-50 py-6 sm:py-8 md:py-10 px-4 sm:px-6">
+      <div className="w-full max-w-6xl">
+        <div className="rounded-t-lg sm:rounded-t-xl bg-blue-900 px-4 sm:px-6 md:px-8 py-3 sm:py-4">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white text-center">Learning Path Suggestion</h2>
         </div>
-        <form onSubmit={handleSuggest} className="bg-white rounded-b-xl shadow p-8 max-w-6xl mx-auto mb-8">
-          <div className="flex items-center mb-4">
-            <label className="block font-medium mr-4 w-1/3 min-w-[180px]">Desired Job Role</label>
-            <input className="flex-1 border rounded px-3 py-2" placeholder="e.g. Data Scientist" />
+        <form onSubmit={handleSuggest} className="bg-white rounded-b-lg sm:rounded-b-xl shadow p-4 sm:p-6 md:p-8 w-full mb-4 sm:mb-6 md:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center mb-4">
+            <label className="block font-medium mb-2 sm:mb-0 sm:mr-4 sm:w-1/3 sm:min-w-[180px] text-base sm:text-lg">Desired Job Role</label>
+            <input className="flex-1 border rounded px-3 py-2 text-sm sm:text-base" placeholder="e.g. Data Scientist" />
           </div>
-          <div className="flex items-center mb-4">
-            <label className="block font-medium mr-4 w-1/3 min-w-[180px]">Current Knowledge / Skills</label>
-            <input className="flex-1 border rounded px-3 py-2" placeholder="e.g. Python, SQL, statistics" />
+          <div className="flex flex-col sm:flex-row sm:items-center mb-4">
+            <label className="block font-medium mb-2 sm:mb-0 sm:mr-4 sm:w-1/3 sm:min-w-[180px] text-base sm:text-lg">Current Knowledge / Skills</label>
+            <input className="flex-1 border rounded px-3 py-2 text-sm sm:text-base" placeholder="e.g. Python, SQL, statistics" />
           </div>
-          <button type="submit" className="py-2.5 px-8 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium mb-8 mx-auto block relative" disabled={isSuggesting}>
+          <button
+            type="submit"
+            className="w-full sm:w-auto py-2.5 px-6 sm:px-8 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium mb-6 sm:mb-8 mx-auto block relative text-sm sm:text-base"
+            disabled={isSuggesting}
+          >
             {isSuggesting ? (
               <>
                 <span className="opacity-0 px-4">Suggest</span>
@@ -54,38 +58,40 @@ const RoadmapPage: React.FC = () => {
           </button>
 
           <div className={`transition-all duration-500 ease-in-out ${showResult ? 'opacity-100 max-h-[2000px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
-            <div className="max-w-6xl mx-auto transform transition-transform duration-500 ease-in-out">
-              <div className="font-semibold mb-2 text-2xl">Courses</div>
-              <table className="w-full mb-4 border border-gray-300 border-collapse">
-                <thead>
-                  <tr>
-                    <th className="text-left border-b border-gray-300 px-3 py-2 bg-gray-50">Course</th>
-                    <th className="text-left border-b border-gray-300 px-3 py-2 bg-gray-50">Duration</th>
-                    <th className="text-left border-b border-gray-300 px-3 py-2 bg-gray-50">Skills Acquired</th>
-                    <th className="text-left border-b border-gray-300 px-3 py-2 bg-gray-50">Link</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mockCourses.map((c, i) => (
-                    <tr key={i}>
-                      <td className="border-b border-gray-200 px-3 py-2">{c.name}</td>
-                      <td className="border-b border-gray-200 px-3 py-2">{c.duration}</td>
-                      <td className="border-b border-gray-200 px-3 py-2">{c.skills}</td>
-                      <td className="border-b border-gray-200 px-3 py-2">
-                        <a href={c.link} className="text-blue-600 underline">
-                          Link
-                        </a>
-                      </td>
+            <div className="w-full transform transition-transform duration-500 ease-in-out">
+              <div className="font-semibold mb-2 text-xl sm:text-2xl">Courses</div>
+              <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <table className="w-full mb-4 border border-gray-300 border-collapse min-w-[600px]">
+                  <thead>
+                    <tr>
+                      <th className="text-left border-b border-gray-300 px-3 py-2 bg-gray-50 text-sm sm:text-base">Course</th>
+                      <th className="text-left border-b border-gray-300 px-3 py-2 bg-gray-50 text-sm sm:text-base">Duration</th>
+                      <th className="text-left border-b border-gray-300 px-3 py-2 bg-gray-50 text-sm sm:text-base">Skills Acquired</th>
+                      <th className="text-left border-b border-gray-300 px-3 py-2 bg-gray-50 text-sm sm:text-base">Link</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="font-semibold mb-2">Learning Path</div>
-              <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                  </thead>
+                  <tbody>
+                    {mockCourses.map((c, i) => (
+                      <tr key={i}>
+                        <td className="border-b border-gray-200 px-3 py-2 text-sm sm:text-base">{c.name}</td>
+                        <td className="border-b border-gray-200 px-3 py-2 text-sm sm:text-base">{c.duration}</td>
+                        <td className="border-b border-gray-200 px-3 py-2 text-sm sm:text-base">{c.skills}</td>
+                        <td className="border-b border-gray-200 px-3 py-2 text-sm sm:text-base">
+                          <a href={c.link} className="text-blue-600 underline">
+                            Link
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="font-semibold mb-2 text-base sm:text-lg">Learning Path</div>
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-4 sm:mx-0 px-4 sm:px-0">
                 {mockCourses.map((c, i) => (
                   <React.Fragment key={i}>
-                    <div className="px-3 py-2 bg-blue-100 rounded border border-blue-300 font-medium whitespace-nowrap text-center min-w-[200px]">{c.name}</div>
-                    {i < mockCourses.length - 1 && <span className="text-2xl text-gray-400 mx-1">→</span>}
+                    <div className="px-3 py-2 bg-blue-100 rounded border border-blue-300 font-medium whitespace-nowrap text-center min-w-[180px] sm:min-w-[200px] text-sm sm:text-base">{c.name}</div>
+                    {i < mockCourses.length - 1 && <span className="text-xl sm:text-2xl text-gray-400 mx-1">→</span>}
                   </React.Fragment>
                 ))}
               </div>

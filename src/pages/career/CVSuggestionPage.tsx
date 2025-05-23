@@ -33,19 +33,25 @@ const CVSuggestionPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-50 py-10">
-      <div className="max-w-3xl w-full">
-        <h2 className="text-3xl font-bold mb-8 text-gray-900 text-left">CV Presentation Suggestions</h2>
-        <form onSubmit={handleGenerate} className="bg-white rounded-xl shadow border border-gray-200 max-w-3xl w-full mb-6 p-6">
+    <div className="flex flex-col items-center min-h-screen bg-gray-50 py-6 sm:py-8 md:py-10 px-4 sm:px-6">
+      <div className="w-full max-w-3xl">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 md:mb-8 text-gray-900 text-left">CV Presentation Suggestions</h2>
+        <form onSubmit={handleGenerate} className="bg-white rounded-lg sm:rounded-xl shadow border border-gray-200 w-full mb-4 sm:mb-6 p-4 sm:p-6">
           <div className="mb-4">
-            <label className="block font-medium mb-1">Position</label>
-            <input className="w-full border rounded px-3 py-2" value={position} onChange={(e) => setPosition(e.target.value)} placeholder="e.g. Software Engineer" />
+            <label className="block font-medium mb-1 text-base sm:text-lg">Position</label>
+            <input className="w-full border rounded px-3 py-2 text-sm sm:text-base" value={position} onChange={(e) => setPosition(e.target.value)} placeholder="e.g. Software Engineer" />
           </div>
-          <div className="mb-6">
-            <label className="block font-medium mb-1">Skills, Experience, Education</label>
-            <textarea className="w-full border rounded px-3 py-2" rows={3} value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="e.g. Java, Python, Front-end development" />
+          <div className="mb-4 sm:mb-6">
+            <label className="block font-medium mb-1 text-base sm:text-lg">Skills, Experience, Education</label>
+            <textarea
+              className="w-full border rounded px-3 py-2 text-sm sm:text-base"
+              rows={3}
+              value={skills}
+              onChange={(e) => setSkills(e.target.value)}
+              placeholder="e.g. Java, Python, Front-end development"
+            />
           </div>
-          <button type="submit" className="w-1/2 py-2.5 px-4 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium text-lg relative" disabled={isGenerating}>
+          <button type="submit" className="w-full sm:w-1/2 py-2.5 px-4 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium text-sm sm:text-lg relative" disabled={isGenerating}>
             {isGenerating ? (
               <>
                 <span className="opacity-0">Generate</span>
@@ -63,16 +69,16 @@ const CVSuggestionPage: React.FC = () => {
         </form>
 
         <div className={`transition-all duration-500 ease-in-out ${draft ? 'opacity-100 max-h-[1000px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
-          <div className="bg-white rounded-xl shadow border border-gray-200 max-w-3xl w-full p-6 mt-2 transform transition-transform duration-500 ease-in-out">
+          <div className="bg-white rounded-lg sm:rounded-xl shadow border border-gray-200 w-full p-4 sm:p-6 mt-2 transform transition-transform duration-500 ease-in-out">
             <div className="flex items-center justify-between mb-2">
-              <div className="font-semibold text-lg">CV Draft</div>
-              <button onClick={handleDownload} className="flex items-center text-blue-600 hover:underline text-sm">
+              <div className="font-semibold text-base sm:text-lg">CV Draft</div>
+              <button onClick={handleDownload} className="flex items-center text-blue-600 hover:underline text-xs sm:text-sm">
                 <FiDownload className="mr-1" /> Download
               </button>
             </div>
-            <div className="bg-gray-50 rounded p-4">
-              <div className="font-bold mb-1">Summary</div>
-              <div>{draft?.summary}</div>
+            <div className="bg-gray-50 rounded p-3 sm:p-4">
+              <div className="font-bold mb-1 text-sm sm:text-base">Summary</div>
+              <div className="text-sm sm:text-base">{draft?.summary}</div>
             </div>
           </div>
         </div>

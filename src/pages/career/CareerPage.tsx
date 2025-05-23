@@ -18,15 +18,15 @@ const CareerPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-50 py-10">
-      <div className="max-w-3xl w-full">
-        <h2 className="text-3xl font-bold mb-6 text-left">Career Guidance</h2>
-        <form onSubmit={handleAsk} className="bg-white rounded-xl shadow p-8 max-w-3xl mx-auto mb-8">
+    <div className="flex flex-col items-center min-h-screen bg-gray-50 py-6 sm:py-8 md:py-10 px-4 sm:px-6">
+      <div className="w-full max-w-3xl">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-left">Career Guidance</h2>
+        <form onSubmit={handleAsk} className="bg-white rounded-lg sm:rounded-xl shadow p-4 sm:p-6 md:p-8 w-full mb-4 sm:mb-6 md:mb-8">
           <div className="mb-4">
-            <label className="block font-medium mb-1">Your Question</label>
-            <input className="w-full border rounded px-3 py-2" placeholder="e.g. How to become a backend developer?" />
+            <label className="block font-medium mb-1 text-base sm:text-lg">Your Question</label>
+            <input className="w-full border rounded px-3 py-2 text-sm sm:text-base" placeholder="e.g. How to become a backend developer?" />
           </div>
-          <button type="submit" className="w-full py-2.5 px-4 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium relative" disabled={isAsking}>
+          <button type="submit" className="w-full sm:w-auto px-6 py-2.5 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium text-sm sm:text-base relative" disabled={isAsking}>
             {isAsking ? (
               <>
                 <span className="opacity-0">Ask</span>
@@ -44,9 +44,9 @@ const CareerPage: React.FC = () => {
         </form>
 
         <div className={`transition-all duration-500 ease-in-out ${result ? 'opacity-100 max-h-[1000px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
-          <div className="bg-white rounded-xl shadow p-6 max-w-3xl mx-auto transform transition-transform duration-500 ease-in-out">
-            <div className="font-semibold mb-2">AI Advice</div>
-            <div>{result}</div>
+          <div className="bg-white rounded-lg sm:rounded-xl shadow p-4 sm:p-6 w-full transform transition-transform duration-500 ease-in-out">
+            <div className="font-semibold mb-2 text-base sm:text-lg">AI Advice</div>
+            <div className="text-sm sm:text-base">{result}</div>
           </div>
         </div>
       </div>
