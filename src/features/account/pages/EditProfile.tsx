@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Button } from '../../components/common';
+import { Button } from '../../../components/common';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppSelector, useAppDispatch } from '../../store';
-import { setUser } from '../../features/auth/slice';
-import type { User } from '../../features/auth/types';
+import { useAppSelector, useAppDispatch } from '../../../store';
+import { setUser } from '../../../features/auth/slice';
+import type { User } from '../../../features/auth/types';
 
 type MockUser = {
   email: string;

@@ -2,6 +2,11 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { FaIdCard, FaUserLarge, FaBriefcase, FaCode, FaMap, FaChevronDown, FaBars } from 'react-icons/fa6';
 import { FaTimes } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
+import React from 'react';
+
+interface DashboardLayoutProps {
+  children?: React.ReactNode;
+}
 
 const sidebarMenu = [
   {
@@ -19,7 +24,7 @@ const sidebarMenu = [
   { label: 'Account', path: 'account/profile', icon: <FaUserLarge size={20} /> },
 ];
 
-export default function DashboardLayout() {
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -137,7 +142,10 @@ export default function DashboardLayout() {
           pt-16 md:pt-0`}
       >
         <Outlet />
+        {children}
       </main>
     </div>
   );
-}
+};
+
+export default DashboardLayout;

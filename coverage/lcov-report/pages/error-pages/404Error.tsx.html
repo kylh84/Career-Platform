@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>1/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
@@ -113,31 +113,35 @@
 <a name='L48'></a><a href='#L48'>48</a>
 <a name='L49'></a><a href='#L49'>49</a>
 <a name='L50'></a><a href='#L50'>50</a>
-<a name='L51'></a><a href='#L51'>51</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -163,52 +167,54 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { useEffect } from 'react';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
 import { Link } from 'react-router-dom';
 import '../../styles/error-pages/style.css';
 &nbsp;
 const Error404: React.FC = () =&gt; {
-  useEffect(() =&gt; {
-    // Thêm Bootstrap và font Arvo dynamically
-    const bootstrapLink = document.createElement('link');
-    bootstrapLink.rel = 'stylesheet';
-    bootstrapLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css';
-    document.head.appendChild(bootstrapLink);
-&nbsp;
-    const arvoLink = document.createElement('link');
-    arvoLink.rel = 'stylesheet';
-    arvoLink.href = 'https://fonts.googleapis.com/css?family=Arvo';
-    document.head.appendChild(arvoLink);
-&nbsp;
-    // Cleanup khi component unmount
-    return () =&gt; {
-      document.head.removeChild(bootstrapLink);
-      document.head.removeChild(arvoLink);
-    };
-  }, []);
-&nbsp;
   return (
-    &lt;section className="page_404"&gt;
-      &lt;div className="container"&gt;
-        &lt;div className="row"&gt;
-          &lt;div className="col-sm-12"&gt;
-            &lt;div className="col-sm-10 col-sm-offset-1 text-center"&gt;
-              &lt;div className="four_zero_four_bg"&gt;
-                &lt;h1 className="text-center"&gt;404&lt;/h1&gt;
-              &lt;/div&gt;
+    &lt;div className="error-page min-h-screen w-full flex items-center justify-center bg-gray-50 px-4 sm:px-6 md:px-8"&gt;
+      &lt;div className="error-content text-center max-w-lg mx-auto"&gt;
+        {/* Error Code Animation */}
+        &lt;div className="error-animation mb-8"&gt;
+          &lt;h1 className="text-6xl sm:text-7xl md:text-8xl font-bold text-blue-600 animate-bounce"&gt;404&lt;/h1&gt;
+        &lt;/div&gt;
 &nbsp;
-              &lt;div className="contant_box_404"&gt;
-                &lt;h3 className="h2"&gt;Look like you're lost&lt;/h3&gt;
-                &lt;p&gt;the page you are looking for not avaible!&lt;/p&gt;
-                &lt;Link to="/dashboard" className="link_404"&gt;
-                  Go to Dashboard
-                &lt;/Link&gt;
-              &lt;/div&gt;
-            &lt;/div&gt;
+        {/* Error Message */}
+        &lt;div className="error-message space-y-4"&gt;
+          &lt;h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-gray-800"&gt;Oops! Page Not Found&lt;/h2&gt;
+&nbsp;
+          &lt;p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-md mx-auto"&gt;The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.&lt;/p&gt;
+&nbsp;
+          {/* Action Buttons */}
+          &lt;div className="action-buttons flex flex-col sm:flex-row items-center justify-center gap-4 mt-8"&gt;
+            &lt;Link
+              to="/dashboard"
+              className="w-full sm:w-auto px-6 py-3 text-base sm:text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center"
+            &gt;
+              Back to Dashboard
+            &lt;/Link&gt;
+&nbsp;
+            &lt;Link
+              to="/home"
+              className="w-full sm:w-auto px-6 py-3 text-base sm:text-lg font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors duration-200 flex items-center justify-center"
+            &gt;
+              Go to Home
+            &lt;/Link&gt;
+          &lt;/div&gt;
+&nbsp;
+          {/* Additional Help */}
+          &lt;div className="mt-8 text-sm sm:text-base text-gray-500"&gt;
+            &lt;p&gt;
+              Need assistance?{' '}
+              &lt;a href="/contact" className="text-blue-600 hover:underline"&gt;
+                Contact Support
+              &lt;/a&gt;
+            &lt;/p&gt;
           &lt;/div&gt;
         &lt;/div&gt;
       &lt;/div&gt;
-    &lt;/section&gt;
+    &lt;/div&gt;
   );
 };
 &nbsp;
@@ -220,7 +226,7 @@ export default Error404;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-20T12:12:50.579Z
+                at 2025-05-27T13:52:59.853Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

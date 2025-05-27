@@ -1,8 +1,8 @@
 import React from 'react';
-import learningRoadmapIcon from '../../assets/icons/learningRoadmapIcon.png';
-import cardProfileIcon from '../../assets/icons/cardProfileIcon.png';
-import programIcon from '../../assets/icons/programIcon.png';
-import careerIcon from '../../assets/icons/career.png';
+import learningRoadmapIcon from '../../../assets/icons/learningRoadmapIcon.png';
+import cardProfileIcon from '../../../assets/icons/cardProfileIcon.png';
+import programIcon from '../../../assets/icons/programIcon.png';
+import careerIcon from '../../../assets/icons/career.png';
 import { useNavigate } from 'react-router-dom';
 
 const features = [

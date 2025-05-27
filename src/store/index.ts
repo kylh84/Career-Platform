@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import rootReducer, { RootState } from './rootReducer';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import authService from '../services/authService';
+import { codeMiddleware } from '../features/career/middleware';
 
 // Check for initial auth state from localStorage
 const preloadedState: Partial<RootState> = {
@@ -32,7 +33,7 @@ const store = configureStore({
         ignoredActionPaths: ['meta.arg', 'payload.timestamp'],
         ignoredPaths: ['items.dates'],
       },
-    }),
+    }).concat(codeMiddleware),
 });
 
 export type AppDispatch = typeof store.dispatch;
