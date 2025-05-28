@@ -1,9 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// Import feature icons
 import learningRoadmapIcon from '../../../assets/icons/learningRoadmapIcon.png';
 import cardProfileIcon from '../../../assets/icons/cardProfileIcon.png';
 import programIcon from '../../../assets/icons/programIcon.png';
 import careerIcon from '../../../assets/icons/career.png';
-import { useNavigate } from 'react-router-dom';
 
 const features = [
   {
@@ -37,8 +39,8 @@ const DashboardHome: React.FC = () => {
 
   return (
     <div className="pt-2 px-6 sm:pt-4 sm:px-10 md:pt-6 md:px-14 lg:pt-8 lg:px-16 xl:px-18 2xl:px-20">
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Dashboard</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+      {/* Feature Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-8">
         {features.map((feature) => (
           <div
             key={feature.title}

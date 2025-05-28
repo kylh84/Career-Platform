@@ -4,33 +4,6 @@
 
 ```
 pages/
-├── dashboard/                    # Trang dashboard chính
-│   ├── components/              # Components riêng của dashboard
-│   │   ├── DashboardStats/
-│   │   ├── ActivityFeed/
-│   │   └── QuickActions/
-│   ├── DashboardHome.tsx        # Trang chủ dashboard
-│   ├── DashboardLayout.tsx      # Layout chung cho dashboard
-│   └── index.ts
-│
-├── account/                     # Quản lý tài khoản
-│   ├── components/             # Components của account
-│   │   ├── ProfileForm/
-│   │   ├── SecuritySettings/
-│   │   └── SubscriptionInfo/
-│   ├── AccountLayout.tsx       # Layout chung cho account
-│   ├── EditProfile.tsx         # Trang chỉnh sửa profile
-│   ├── Profile.tsx             # Trang profile
-│   ├── Security.tsx            # Trang bảo mật
-│   └── Subscription.tsx        # Trang đăng ký gói
-│
-├── career/                     # Phát triển sự nghiệp
-│   ├── components/            # Components của career
-│   ├── CareerPage.tsx         # Trang career chính
-│   ├── CodePage.tsx           # Trang code
-│   ├── CVOptimizationPage.tsx # Trang tối ưu CV
-│   ├── CVSuggestionPage.tsx   # Trang gợi ý CV
-│   └── RoadmapPage.tsx        # Trang lộ trình
 │
 ├── error-pages/               # Trang lỗi
 │   ├── components/           # Components cho trang lỗi
@@ -55,33 +28,7 @@ pages/
    - Layout chứa các elements dùng chung như navigation, sidebar
    - Tái sử dụng layout cho các trang con
 
-3. **Routing Organization**
-
-   ```typescript
-   // routes/index.ts
-   const routes = {
-     dashboard: {
-       root: '/dashboard',
-       home: '/dashboard/home',
-       // other dashboard routes
-     },
-     account: {
-       root: '/account',
-       profile: '/account/profile',
-       security: '/account/security',
-       subscription: '/account/subscription',
-     },
-     career: {
-       root: '/career',
-       code: '/career/code',
-       cvOptimization: '/career/cv-optimization',
-       cvSuggestion: '/career/cv-suggestion',
-       roadmap: '/career/roadmap',
-     },
-   };
-   ```
-
-4. **Lazy Loading**
+3. **Lazy Loading**
 
    ```typescript
    // App.tsx hoặc router configuration
@@ -90,7 +37,7 @@ pages/
    const CareerPage = lazy(() => import('./pages/career/CareerPage'));
    ```
 
-5. **Page Component Structure**
+4. **Page Component Structure**
 
    ```typescript
    // Template cho mỗi page component
