@@ -1,133 +1,141 @@
-# Pages Structure
+# Pages Structure / Cấu trúc Pages
 
-## Cấu trúc thư mục
+## Directory Structure / Cấu trúc thư mục
 
 ```
 pages/
 │
-├── error-pages/               # Trang lỗi
-│   ├── components/           # Components cho trang lỗi
-│   ├── 404Error.tsx         # Trang 404
-│   ├── 500Error.tsx         # Trang 500
+├── error-pages/               # Error pages / Trang lỗi
+│   ├── components/           # Error page components / Components cho trang lỗi
+│   ├── 404Error.tsx         # 404 page / Trang 404
+│   ├── 500Error.tsx         # 500 page / Trang 500
 │   └── ErrorBoundary.tsx    # Error boundary component
 │
-└── Home.tsx                  # Trang chủ
+├── auth/                     # Authentication pages / Trang xác thực
+│   ├── components/          # Auth components / Components xác thực
+│   ├── LoginPage.tsx       # Login page / Trang đăng nhập
+│   └── RegisterPage.tsx    # Register page / Trang đăng ký
+│
+├── career/                   # Career related pages / Trang về nghề nghiệp
+│   ├── components/          # Career components / Components nghề nghiệp
+│   └── CareerPage.tsx      # Main career page / Trang nghề nghiệp chính
+│
+└── Home.tsx                  # Home page / Trang chủ
 ```
 
-## Nguyên tắc tổ chức
+## Organization Principles / Nguyên tắc tổ chức
 
-1. **Phân cấp theo tính năng**
+### 1. Feature-based Structure / Phân cấp theo tính năng
 
-   - Mỗi nhóm tính năng lớn có thư mục riêng
-   - Components riêng được đặt trong thư mục components của tính năng
-   - Shared components được đặt ở cấp cao hơn
+- Each major feature has its own directory / Mỗi tính năng lớn có thư mục riêng
+- Feature-specific components in feature's components directory / Components riêng được đặt trong thư mục components của tính năng
+- Shared components at higher level / Components dùng chung đặt ở cấp cao hơn
 
-2. **Layout Management**
+### 2. Layout Management / Quản lý Layout
 
-   - Mỗi section lớn có layout riêng (DashboardLayout, AccountLayout)
-   - Layout chứa các elements dùng chung như navigation, sidebar
-   - Tái sử dụng layout cho các trang con
+```typescript
+// Example of a page using layout / Ví dụ về trang sử dụng layout
+const CareerPage: React.FC = () => {
+  return (
+    <DashboardLayout>
+      <CareerContent />
+    </DashboardLayout>
+  );
+};
+```
 
-3. **Lazy Loading**
+### 3. Component Structure / Cấu trúc Component
 
-   ```typescript
-   // App.tsx hoặc router configuration
-   const DashboardPage = lazy(() => import('./pages/dashboard/DashboardHome'));
-   const AccountPage = lazy(() => import('./pages/account/AccountLayout'));
-   const CareerPage = lazy(() => import('./pages/career/CareerPage'));
-   ```
+```typescript
+const PageComponent: React.FC = () => {
+  // 1. Hooks & State / Hooks và State
+  const [data, setData] = useState<DataType>();
 
-4. **Page Component Structure**
+  // 2. API Calls / Gọi API
+  const { data, isLoading, error } = useQuery('key', fetchData);
 
-   ```typescript
-   // Template cho mỗi page component
-   const PageName: React.FC = () => {
-     // 1. Hooks & State
-     const [state, setState] = useState();
+  // 3. Event Handlers / Xử lý sự kiện
+  const handleAction = () => {
+    // Handle events / Xử lý sự kiện
+  };
 
-     // 2. Queries & Mutations
-     const { data, loading } = useQuery();
+  // 4. Render
+  if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage error={error} />;
 
-     // 3. Handlers & Effects
-     useEffect(() => {
-       // Side effects
-     }, []);
+  return (
+    <Layout>
+      <Content />
+    </Layout>
+  );
+};
+```
 
-     // 4. Render helpers
-     const renderContent = () => {};
+## Best Practices / Quy tắc thực hành tốt nhất
 
-     // 5. Main render
-     return (
-       <PageLayout>
-         <PageHeader />
-         <MainContent />
-         <PageFooter />
-       </PageLayout>
-     );
-   };
-   ```
+### 1. Performance / Hiệu suất
 
-## Best Practices
+- Use React.memo for static components / Sử dụng React.memo cho components ít thay đổi
+- Implement code splitting / Thực hiện phân chia code
+- Optimize re-renders / Tối ưu việc render lại
 
-1. **Performance Optimization**
+### 2. Error Handling / Xử lý lỗi
 
-   - Sử dụng React.memo cho components ít thay đổi
-   - Implement lazy loading cho các routes
-   - Tối ưu re-renders với useMemo và useCallback
+```typescript
+<ErrorBoundary fallback={<ErrorPage />}>
+  <PageContent />
+</ErrorBoundary>
+```
 
-2. **Error Handling**
+### 3. Loading States / Trạng thái tải
 
-   - Mỗi page có error boundary riêng
-   - Hiển thị thông báo lỗi phù hợp
-   - Logging lỗi để debugging
+- Implement skeleton loading / Sử dụng skeleton loading
+- Show appropriate loading indicators / Hiển thị chỉ báo tải phù hợp
+- Handle loading states gracefully / Xử lý trạng thái tải một cách mượt mà
 
-3. **Loading States**
+### 4. SEO & Metadata
 
-   - Skeleton loading cho từng page
-   - Loading indicators phù hợp
-   - Smooth transitions giữa các states
+```typescript
+import { Helmet } from 'react-helmet-async';
 
-4. **SEO & Metadata**
+const Page = () => (
+  <>
+    <Helmet>
+      <title>Page Title</title>
+      <meta name="description" content="Description" />
+    </Helmet>
+    <Content />
+  </>
+);
+```
 
-   ```typescript
-   const PageComponent = () => {
-     return (
-       <>
-         <Helmet>
-           <title>Page Title</title>
-           <meta name="description" content="Page description" />
-         </Helmet>
-         {/* Page content */}
-       </>
-     );
-   };
-   ```
+### 5. Responsive Design / Thiết kế responsive
 
-5. **Responsive Design**
-   - Mobile-first approach
-   - Breakpoints nhất quán
-   - Adaptive layouts
+- Mobile-first approach / Tiếp cận mobile-first
+- Use consistent breakpoints / Sử dụng breakpoints nhất quán
+- Implement fluid layouts / Thực hiện layout linh hoạt
 
-## Testing Strategy
+## Testing / Kiểm thử
 
-1. **Unit Tests**
+### Unit Tests / Kiểm thử đơn vị
 
-   ```typescript
-   describe('PageComponent', () => {
-     it('renders correctly', () => {});
-     it('handles loading state', () => {});
-     it('handles error state', () => {});
-     it('integrates with layout', () => {});
-   });
-   ```
+```typescript
+describe('Component', () => {
+  it('renders correctly', () => {
+    render(<Component />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+});
+```
 
-2. **Integration Tests**
+### Integration Tests / Kiểm thử tích hợp
 
-   - Test navigation flow
-   - Test data fetching
-   - Test user interactions
+- Test user flows / Kiểm tra luồng người dùng
+- Test component integration / Kiểm tra tích hợp component
+- Test API integration / Kiểm tra tích hợp API
 
-3. **E2E Tests**
-   - Critical user journeys
-   - Cross-browser compatibility
-   - Performance metrics
+### E2E Tests / Kiểm thử đầu cuối
+
+- Test critical paths / Kiểm tra các luồng quan trọng
+- Cross-browser testing / Kiểm tra đa trình duyệt
+- Performance testing / Kiểm tra hiệu suất
