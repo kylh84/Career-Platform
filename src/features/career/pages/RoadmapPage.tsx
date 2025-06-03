@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
 const mockCourses = [
-  { name: 'Introduction to Data Science', duration: '4 weeks', skills: 'Python, Data Analysis', link: '#' },
-  { name: 'Python for Data Analysis', duration: '6 weeks', skills: 'Pandas, Numpy', link: '#' },
-  { name: 'Statistics and Probability', duration: '4 weeks', skills: 'Statistics', link: '#' },
-  { name: 'Machine Learning Fundamentals', duration: '8 weeks', skills: 'ML Basics', link: '#' },
+  { name: 'Introduction to Data Science', duration: '4 weeks', link: '#' },
+  { name: 'Python for Data Analysis', duration: '6 weeks', link: '#' },
+  { name: 'Statistics and Probability', duration: '4 weeks', link: '#' },
+  { name: 'Machine Learning Fundamentals', duration: '8 weeks', link: '#' },
 ];
 
 const RoadmapPage: React.FC = () => {
@@ -23,23 +23,23 @@ const RoadmapPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-50 py-6 sm:py-8 md:py-10 px-4 sm:px-6">
-      <div className="w-full max-w-6xl">
-        <div className="rounded-t-lg sm:rounded-t-xl bg-blue-900 px-4 sm:px-6 md:px-8 py-3 sm:py-4">
+    <div className="min-h-screen bg-gray-50 py-6 px-2 sm:px-4 md:px-8 xl:px-14 overflow-x-hidden">
+      <div className="max-w-6xl mx-auto w-full">
+        <div className="rounded-t-lg sm:rounded-t-xl bg-blue-900 px-3 sm:px-4 md:px-6 py-3 sm:py-4">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white text-center">Learning Path Suggestion</h2>
         </div>
-        <form onSubmit={handleSuggest} className="bg-white rounded-b-lg sm:rounded-b-xl shadow p-4 sm:p-6 md:p-8 w-full mb-4 sm:mb-6 md:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center mb-4">
-            <label className="block font-medium mb-2 sm:mb-0 sm:mr-4 sm:w-1/3 sm:min-w-[180px] text-base sm:text-lg">Desired Job Role</label>
-            <input className="flex-1 border rounded px-3 py-2 text-sm sm:text-base" placeholder="e.g. Data Scientist" />
+        <form onSubmit={handleSuggest} className="bg-white rounded-b-lg sm:rounded-b-xl shadow p-3 sm:p-4 md:p-6 w-full mb-4">
+          <div className="flex flex-col lg:flex-row lg:items-center mb-4">
+            <label className="block font-medium mb-2 lg:mb-0 lg:mr-4 lg:w-1/3 lg:min-w-[180px] text-base">Desired Job Role</label>
+            <input className="flex-1 border rounded px-3 py-2 text-sm sm:text-base w-full lg:w-auto" placeholder="e.g. Data Scientist" />
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center mb-4">
-            <label className="block font-medium mb-2 sm:mb-0 sm:mr-4 sm:w-1/3 sm:min-w-[180px] text-base sm:text-lg">Current Knowledge / Skills</label>
-            <input className="flex-1 border rounded px-3 py-2 text-sm sm:text-base" placeholder="e.g. Python, SQL, statistics" />
+          <div className="flex flex-col lg:flex-row lg:items-center mb-4">
+            <label className="block font-medium mb-2 lg:mb-0 lg:mr-4 lg:w-1/3 lg:min-w-[180px] text-base">Current Knowledge / Skills</label>
+            <input className="flex-1 border rounded px-3 py-2 text-sm sm:text-base w-full lg:w-auto" placeholder="e.g. Python, SQL, statistics" />
           </div>
           <button
             type="submit"
-            className="w-full sm:w-auto py-2.5 px-6 sm:px-8 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium mb-6 sm:mb-8 mx-auto block relative text-sm sm:text-base"
+            className="w-full sm:w-auto py-2.5 px-6 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium mb-6 mx-auto block relative text-sm sm:text-base"
             disabled={isSuggesting}
           >
             {isSuggesting ? (
@@ -59,25 +59,31 @@ const RoadmapPage: React.FC = () => {
 
           <div className={`transition-all duration-500 ease-in-out ${showResult ? 'opacity-100 max-h-[2000px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
             <div className="w-full transform transition-transform duration-500 ease-in-out">
-              <div className="font-semibold mb-2 text-xl sm:text-2xl">Courses</div>
-              <div className="overflow-x-auto -mx-4 sm:mx-0">
-                <table className="w-full mb-4 border border-gray-300 border-collapse min-w-[600px]">
-                  <thead>
+              <div className="font-semibold mb-4 text-xl">Courses</div>
+
+              {/* Desktop Table View */}
+              <div className="hidden lg:block mb-6">
+                <table className="w-full border-collapse">
+                  <thead className="bg-gray-50">
                     <tr>
-                      <th className="text-left border-b border-gray-300 px-3 py-2 bg-gray-50 text-sm sm:text-base">Course</th>
-                      <th className="text-left border-b border-gray-300 px-3 py-2 bg-gray-50 text-sm sm:text-base">Duration</th>
-                      <th className="text-left border-b border-gray-300 px-3 py-2 bg-gray-50 text-sm sm:text-base">Skills Acquired</th>
-                      <th className="text-left border-b border-gray-300 px-3 py-2 bg-gray-50 text-sm sm:text-base">Link</th>
+                      <th className="text-left py-3 px-4 border border-gray-200 font-medium">Course</th>
+                      <th className="text-left py-3 px-4 border border-gray-200 font-medium w-[120px]">Duration</th>
+                      <th className="text-left py-3 px-4 border border-gray-200 font-medium w-[180px]">Skills Acquired</th>
+                      <th className="text-left py-3 px-4 border border-gray-200 font-medium w-[100px]"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {mockCourses.map((c, i) => (
-                      <tr key={i}>
-                        <td className="border-b border-gray-200 px-3 py-2 text-sm sm:text-base">{c.name}</td>
-                        <td className="border-b border-gray-200 px-3 py-2 text-sm sm:text-base">{c.duration}</td>
-                        <td className="border-b border-gray-200 px-3 py-2 text-sm sm:text-base">{c.skills}</td>
-                        <td className="border-b border-gray-200 px-3 py-2 text-sm sm:text-base">
-                          <a href={c.link} className="text-blue-600 underline">
+                      <tr key={i} className="border-b border-gray-200">
+                        <td className="py-3 px-4 border border-gray-200">{c.name}</td>
+                        <td className="py-3 px-4 border border-gray-200">{c.duration}</td>
+                        <td className="py-3 px-4 border border-gray-200">
+                          <a href={c.link} className="text-blue-600 hover:underline">
+                            Link
+                          </a>
+                        </td>
+                        <td className="py-3 px-4 border border-gray-200">
+                          <a href={c.link} className="text-blue-600 hover:underline">
                             Link
                           </a>
                         </td>
@@ -86,12 +92,58 @@ const RoadmapPage: React.FC = () => {
                   </tbody>
                 </table>
               </div>
-              <div className="font-semibold mb-2 text-base sm:text-lg">Learning Path</div>
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 -mx-4 sm:mx-0 px-4 sm:px-0">
+
+              {/* Mobile Card View */}
+              <div className="lg:hidden space-y-4 mb-6">
+                {mockCourses.map((c, i) => (
+                  <div key={i} className="border rounded-lg p-4 bg-white shadow-sm">
+                    <h3 className="font-medium text-base mb-2">{c.name}</h3>
+                    <div className="space-y-1 text-sm">
+                      <p>
+                        <span className="font-medium">Duration:</span> {c.duration}
+                      </p>
+                      <p>
+                        <span className="font-medium">Skills Acquired:</span>{' '}
+                        <a href={c.link} className="text-blue-600 hover:underline">
+                          Link
+                        </a>
+                      </p>
+                      <p>
+                        <span className="font-medium"> </span>{' '}
+                        <a href={c.link} className="text-blue-600 hover:underline">
+                          Link
+                        </a>
+                      </p>
+                      <a href={c.link} className="text-blue-600 hover:underline block mt-2">
+                        View Course
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="font-semibold mb-2 text-base">Learning Path</div>
+
+              {/* Desktop/Tablet Horizontal Path */}
+              <div className="hidden lg:flex items-center gap-2 mb-4 flex-wrap">
                 {mockCourses.map((c, i) => (
                   <React.Fragment key={i}>
-                    <div className="px-3 py-2 bg-blue-100 rounded border border-blue-300 font-medium whitespace-nowrap text-center min-w-[180px] sm:min-w-[200px] text-sm sm:text-base">{c.name}</div>
-                    {i < mockCourses.length - 1 && <span className="text-xl sm:text-2xl text-gray-400 mx-1">→</span>}
+                    <div className="px-3 py-2 bg-gray-200 rounded border border-gray-400 font-medium text-center text-sm flex-1 min-w-[150px]">{c.name}</div>
+                    {i < mockCourses.length - 1 && <span className="text-xl text-gray-400">→</span>}
+                  </React.Fragment>
+                ))}
+              </div>
+
+              {/* Mobile Vertical Path */}
+              <div className="lg:hidden space-y-2">
+                {mockCourses.map((c, i) => (
+                  <React.Fragment key={i}>
+                    <div className="px-3 py-2 bg-blue-100 rounded border border-blue-300 font-medium text-center text-sm">{c.name}</div>
+                    {i < mockCourses.length - 1 && (
+                      <div className="flex justify-center">
+                        <span className="text-xl text-gray-400 transform rotate-90">→</span>
+                      </div>
+                    )}
                   </React.Fragment>
                 ))}
               </div>
