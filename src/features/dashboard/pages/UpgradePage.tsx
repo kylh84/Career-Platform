@@ -30,7 +30,7 @@ const UpgradePage: React.FC = () => {
     yearly: {
       price: 199.99,
       period: 'year',
-      save: 'Save 17%',
+      save: '',
     },
   };
 
