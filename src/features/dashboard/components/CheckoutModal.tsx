@@ -34,18 +34,22 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, amount, 
     return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
   };
 
+  const getPaymentLink = (qrUrl: string) => {
+    const url = new URL(qrUrl);
+    return url.searchParams.get('data') || '';
+  };
   const handleCopyLink = () => {
     // In a real application, this would be the actual payment link
-    navigator.clipboard.writeText('https://payment.momo.vn/12456');
+    navigator.clipboard.writeText(getPaymentLink(qrCode));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center ${isOpen ? 'visible' : 'invisible'}`}>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 ${isOpen ? 'visible' : 'invisible'}`}>
       <div className="fixed inset-0 bg-black/50" onClick={onClose}></div>
 
-      <div className="relative bg-white rounded-[20px] w-80 max-w-sm mx-4 shadow-lg border border-gray-200">
+      <div className="relative bg-white rounded-[20px] w-80 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto shadow-lg border border-gray-200">
         {/* Header */}
         <div className="p-6">
           <h3 className="text-2xl font-bold text-center mb-4">Checkout</h3>
@@ -61,7 +65,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, amount, 
 
           {/* QR Code */}
           <div className="bg-white mb-2">
-            <img src={qrCode} alt="QR Code" className="w-56 mx-auto aspect-square object-contain mb-4" />
+            <img src={qrCode} alt="QR Code" className="w-40 sm:w-52 md:w-56 mx-auto aspect-square object-contain mb-4" />
           </div>
 
           <p className="text-center text-sm font-medium mb-2">Scan this QR code with the MoMo app</p>
