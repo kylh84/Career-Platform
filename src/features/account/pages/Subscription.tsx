@@ -1,41 +1,75 @@
-import React from 'react';
-import { Button } from '../../../components/common';
-import { useNavigate } from 'react-router-dom';
-
+import React, { useState } from 'react';
 const Subscription: React.FC = () => {
-  // Giả lập dữ liệu gói và usage
-  const plan = 'Freemium';
-  const cvUsage = 3;
-  const codeUsage = 2;
-  const cvLimit = 5;
-  const codeLimit = 5;
-  const navigate = useNavigate();
+  const [showCancelModal, setShowCancelModal] = useState(false);
+
+  const subscriptionData = {
+    plan: 'Freemium',
+    billingCycle: 'Monthly',
+    expirationDate: 'February 10, 2024',
+    paymentMethod: 'Visa •••• 1234',
+  };
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-lg sm:rounded-xl shadow p-4 sm:p-6 md:p-8">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center">Subscription</h2>
-      <div className="mb-4">
-        <div className="font-semibold text-sm sm:text-base">
-          Current Plan: <span className="text-blue-700">{plan}</span>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <h1 className="text-[32px] text-center font-bold mb-8">Manage Subscription</h1>
+      <div className="max-w-2xl mx-auto p-8 bg-white rounded-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6">
+          {/* Current Plan */}
+          <div>
+            <label className="block text-[20px] font-medium mb-2">Current Plan</label>
+            <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">{subscriptionData.plan}</div>
+          </div>
+
+          {/* Billing Cycle */}
+          <div>
+            <label className="block text-[20px] font-medium mb-2">Billing Cycle</label>
+            <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">{subscriptionData.billingCycle}</div>
+          </div>
+
+          {/* Expiration Date */}
+          <div>
+            <label className="block text-[20px] font-medium mb-2">Expiration Date</label>
+            <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">{subscriptionData.expirationDate}</div>
+          </div>
+
+          {/* Payment Method */}
+          <div>
+            <label className="block text-[20px] font-medium mb-2">Payment Method</label>
+            <div className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">{subscriptionData.paymentMethod}</div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+          <button className="w-full sm:w-auto px-6 py-2.5 border border-gray-300 rounded-lg text-[16px] hover:bg-gray-50">Change Plan</button>
+          <button onClick={() => setShowCancelModal(true)} className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-lg text-[16px] hover:bg-blue-700">
+            Cancel Subscription
+          </button>
         </div>
       </div>
-      <div className="mb-4 space-y-2">
-        <div className="text-sm sm:text-base">
-          CV Usage:{' '}
-          <span className="font-semibold">
-            {cvUsage}/{cvLimit}
-          </span>
+
+      {/* Cancel Subscription Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full">
+            <h2 className="text-[24px] font-bold mb-6 text-center">Cancel Subscription</h2>
+            <div className="text-center">
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-lg font-bold">⚠️ Are you sure you want to cancel your subscription?</h3>
+              </div>
+              <p className="text-gray-600 mb-8">You will lose access to premium features from {subscriptionData.expirationDate}.</p>
+              <div className="space-y-3">
+                <button onClick={() => setShowCancelModal(false)} className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-lg text-[16px] hover:bg-blue-700">
+                  Cancel Subscription
+                </button>
+                <button onClick={() => setShowCancelModal(false)} className="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-[16px] hover:bg-gray-50">
+                  Stay Premium
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="text-sm sm:text-base">
-          Code Usage:{' '}
-          <span className="font-semibold">
-            {codeUsage}/{codeLimit}
-          </span>
-        </div>
-      </div>
-      <Button variant="primary" className="w-full text-sm sm:text-base" onClick={() => navigate('/dashboard/upgrade')}>
-        Upgrade Plan
-      </Button>
+      )}
     </div>
   );
 };
