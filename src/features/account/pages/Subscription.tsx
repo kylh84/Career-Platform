@@ -53,9 +53,10 @@ const Subscription: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
           <div className="bg-white rounded-lg p-6 max-w-sm w-full">
             <h2 className="text-[24px] font-bold mb-6 text-center">Cancel Subscription</h2>
-            <div className="text-center">
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-lg font-bold">⚠️ Are you sure you want to cancel your subscription?</h3>
+            <div className="text-start">
+              <div className="flex items-start gap-2 mb-2">
+                <span className="text-2xl mt-[-5px]">⚠️</span>
+                <span className="text-lg font-semibold leading-snug">Are you sure you want to cancel your subscription?</span>
               </div>
               <p className="text-gray-600 mb-8">You will lose access to premium features from {subscriptionData.expirationDate}.</p>
               <div className="space-y-3">
