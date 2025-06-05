@@ -189,11 +189,13 @@ const SignUpForm: React.FC = () => {
                         if (!trimmed) return 'Email is required';
                         if (/\s/.test(trimmed)) return 'Email must not contain spaces';
                         if (!trimmed.includes('@')) return 'Email must include @';
-                        if (!trimmed.toLowerCase().endsWith('.com')) return 'Email must end with .com';
-                        if (trimmed.startsWith('.') || trimmed.endsWith('.')) return 'Email must not start or end with a dot (.)';
                         if ((trimmed.match(/@/g) || []).length !== 1) return 'Email must contain exactly one @';
                         if (trimmed.length < 6) return 'Email must be at least 6 characters';
                         if (trimmed.length > 50) return 'Email must be at most 50 characters';
+
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+                        if (!emailRegex.test(trimmed)) return 'Email format is invalid';
+
                         return true;
                       },
                     })}
