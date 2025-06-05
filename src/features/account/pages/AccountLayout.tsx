@@ -92,13 +92,23 @@ const AccountLayout: React.FC = () => {
               {item.label}
             </NavLink>
           ))}
+          <div className=" flex flex-col gap-2 md:hidden">
+            <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center mt-6 gap-2 text-sm sm:text-base">
+              <FaArrowUpRightFromSquare className="text-base sm:text-lg" /> Upgrade
+            </Button>
+            <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
+              <FaRightFromBracket className="text-base sm:text-lg" /> Log out
+            </Button>
+          </div>
         </nav>
-        <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center gap-2 mb-3 sm:mb-4 text-sm sm:text-base">
-          <FaArrowUpRightFromSquare className="text-base sm:text-lg" /> Upgrade
-        </Button>
-        <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
-          <FaRightFromBracket className="text-base sm:text-lg" /> Log out
-        </Button>
+        <div className="hidden md:block mt-6 space-y-3">
+          <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
+            <FaArrowUpRightFromSquare className="text-base sm:text-lg" /> Upgrade
+          </Button>
+          <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
+            <FaRightFromBracket className="text-base sm:text-lg" /> Log out
+          </Button>
+        </div>
       </aside>
 
       {/* Main content */}
