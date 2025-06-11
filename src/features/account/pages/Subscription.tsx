@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+
 const Subscription: React.FC = () => {
-  const [showCancelModal, setShowCancelModal] = useState(false);
+  const navigate = useNavigate();
 
   const subscriptionData = {
     plan: 'Freemium',
@@ -42,35 +44,12 @@ const Subscription: React.FC = () => {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
           <button className="w-full sm:w-auto px-6 py-2.5 border border-gray-300 rounded-lg text-[16px] hover:bg-gray-50">Change Plan</button>
-          <button onClick={() => setShowCancelModal(true)} className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-lg text-[16px] hover:bg-blue-700">
+          <button onClick={() => navigate('cancel-confirm')} className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-lg text-[16px] hover:bg-blue-700">
             Cancel Subscription
           </button>
         </div>
       </div>
-
-      {/* Cancel Subscription Modal */}
-      {showCancelModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-[9999]">
-          <div className="bg-white rounded-lg p-6 max-w-sm w-full">
-            <h2 className="text-[24px] font-bold mb-6 text-center">Cancel Subscription</h2>
-            <div className="text-start">
-              <div className="flex items-start gap-2 mb-2">
-                <span className="text-2xl mt-[-5px]">⚠️</span>
-                <span className="text-lg font-semibold leading-snug">Are you sure you want to cancel your subscription?</span>
-              </div>
-              <p className="text-gray-600 mb-8">You will lose access to premium features from {subscriptionData.expirationDate}.</p>
-              <div className="space-y-3">
-                <button onClick={() => setShowCancelModal(false)} className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-lg text-[16px] hover:bg-blue-700">
-                  Cancel Subscription
-                </button>
-                <button onClick={() => setShowCancelModal(false)} className="w-full py-2.5 px-4 border border-gray-300 rounded-lg text-[16px] hover:bg-gray-50">
-                  Stay Premium
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <Outlet context={{ subscriptionData }} />
     </div>
   );
 };

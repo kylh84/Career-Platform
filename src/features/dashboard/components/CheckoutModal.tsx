@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaRegCopy } from 'react-icons/fa6';
-interface CheckoutModalProps {
+
+export interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
   amount: number;

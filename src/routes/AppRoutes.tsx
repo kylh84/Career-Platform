@@ -1,9 +1,12 @@
 import React, { useEffect, Suspense } from 'react';
-import { Route, Routes, useLocation, Navigate } from 'react-router-dom';
+import { Route, Routes, useLocation, Navigate, useOutletContext } from 'react-router-dom';
 import LoginPage from '../features/auth/pages/LoginPage';
 import SignUpForm from '../features/auth/components/SignUpForm';
 import PrivateRoute from './PrivateRoute';
 import { useAppSelector } from '../store';
+import CancelSubscriptionModal from '../features/account/components/CancelSubscriptionModal';
+import CheckoutModal from '../features/dashboard/components/CheckoutModal';
+import type { CheckoutModalProps } from '../features/dashboard/components/CheckoutModal';
 
 // Lazy load public pages
 const Home = React.lazy(() => import('../pages/home/Home'));
@@ -23,6 +26,8 @@ const Profile = React.lazy(() => import('../features/account/pages/Profile'));
 const Subscription = React.lazy(() => import('../features/account/pages/Subscription'));
 const Security = React.lazy(() => import('../features/account/pages/Security'));
 const EditProfile = React.lazy(() => import('../features/account/pages/EditProfile'));
+const TransactionHistory = React.lazy(() => import('../features/account/pages/TransactionHistory'));
+const TransactionDetailPage = React.lazy(() => import('../features/account/pages/TransactionDetailPage'));
 
 const LoadingScreen = ({ message }: { message: string }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -68,7 +73,9 @@ const AppRoutes: React.FC = () => {
           <Route path="code" element={<CodePage />} />
           <Route path="roadmap" element={<RoadmapPage />} />
           <Route path="career" element={<CareerPage />} />
-          <Route path="upgrade" element={<UpgradePage />} />
+          <Route path="upgrade" element={<UpgradePage />}>
+            <Route path="checkout" element={<CheckoutModalWrapper />} />
+          </Route>
         </Route>
 
         {/* --- Account Standalone Layout --- */}
@@ -82,7 +89,11 @@ const AppRoutes: React.FC = () => {
         >
           <Route index element={<Profile />} />
           <Route path="profile" element={<Profile />} />
-          <Route path="subscription" element={<Subscription />} />
+          <Route path="subscription/manage" element={<Subscription />}>
+            <Route path="cancel-confirm" element={<CancelSubscriptionModalWrapper />} />
+          </Route>
+          <Route path="subscription/transactions" element={<TransactionHistory />} />
+          <Route path="subscription/transactions/:transactionId" element={<TransactionDetailPage />} />
           <Route path="security" element={<Security />} />
           <Route path="edit" element={<EditProfile />} />
         </Route>
@@ -93,5 +104,20 @@ const AppRoutes: React.FC = () => {
     </Suspense>
   );
 };
+
+// Wrapper để lấy context từ Outlet và truyền vào CancelSubscriptionModal
+type SubscriptionContextType = { subscriptionData: { expirationDate: string } };
+function CancelSubscriptionModalWrapper() {
+  const { subscriptionData } = useOutletContext<SubscriptionContextType>();
+  return <CancelSubscriptionModal subscriptionData={subscriptionData} />;
+}
+
+// Wrapper để lấy context từ Outlet và truyền vào CheckoutModal
+type CheckoutContextType = { checkoutData: Omit<CheckoutModalProps, 'isOpen' | 'onClose'>; onClose: () => void };
+function CheckoutModalWrapper() {
+  const { checkoutData, onClose } = useOutletContext<CheckoutContextType>();
+  if (!checkoutData) return null;
+  return <CheckoutModal isOpen={true} onClose={onClose} {...checkoutData} />;
+}
 
 export default AppRoutes;
