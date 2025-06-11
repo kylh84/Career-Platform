@@ -48,7 +48,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, amount, 
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 ${isOpen ? 'visible' : 'invisible'}`}>
-      <div className="fixed inset-0 bg-black/50" onClick={onClose}></div>
+      <div data-testid="modal-overlay" className="fixed inset-0 bg-black/50" onClick={onClose}></div>
 
       <div className="relative bg-white rounded-[20px] w-80 max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl mx-auto shadow-lg border border-gray-200">
         {/* Header */}
