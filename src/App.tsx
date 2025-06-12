@@ -6,6 +6,7 @@ import AppRoutes from './routes/AppRoutes';
 import { ToastProvider } from './hooks/ui/toast';
 import { I18nProvider } from './i18n';
 import './index.css';
+import Assistant from './components/Assistant';
 
 // ErrorBoundary component để bắt lỗi rendering
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
@@ -118,6 +119,7 @@ const App: React.FC = () => {
               <ScrollToTop />
               <div className="app">
                 <AppRoutes />
+                <Assistant />
               </div>
             </ToastProvider>
           </I18nProvider>
