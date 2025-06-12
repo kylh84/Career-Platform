@@ -12,7 +12,7 @@ const TransactionHistory: React.FC = () => {
     <div className="min-h-screen flex items-start justify-center bg-gray-50 px-2 sm:px-4 mt-8">
       <div className="w-full max-w-[32rem] bg-white rounded-xl shadow p-4 sm:p-6 md:p-8">
         <h2 className="text-2xl font-bold mb-6 text-center">Transaction History</h2>
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-end mb-4 sm:hidden">
           <Button variant="secondary" onClick={() => {}} className="border border-gray-300 text-sm font-semibold text-black bg-white px-3 py-1.5">
             Billing Info
           </Button>
