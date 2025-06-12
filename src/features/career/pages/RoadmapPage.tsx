@@ -69,7 +69,6 @@ const RoadmapPage: React.FC = () => {
                       <th className="text-left py-3 px-4 border border-gray-200 font-medium">Course</th>
                       <th className="text-left py-3 px-4 border border-gray-200 font-medium w-[120px]">Duration</th>
                       <th className="text-left py-3 px-4 border border-gray-200 font-medium w-[180px]">Skills Acquired</th>
-                      <th className="text-left py-3 px-4 border border-gray-200 font-medium w-[100px]"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -77,11 +76,6 @@ const RoadmapPage: React.FC = () => {
                       <tr key={i} className="border-b border-gray-200">
                         <td className="py-3 px-4 border border-gray-200">{c.name}</td>
                         <td className="py-3 px-4 border border-gray-200">{c.duration}</td>
-                        <td className="py-3 px-4 border border-gray-200">
-                          <a href={c.link} className="text-blue-600 hover:underline">
-                            Link
-                          </a>
-                        </td>
                         <td className="py-3 px-4 border border-gray-200">
                           <a href={c.link} className="text-blue-600 hover:underline">
                             Link
@@ -108,12 +102,7 @@ const RoadmapPage: React.FC = () => {
                           Link
                         </a>
                       </p>
-                      <p>
-                        <span className="font-medium"> </span>{' '}
-                        <a href={c.link} className="text-blue-600 hover:underline">
-                          Link
-                        </a>
-                      </p>
+
                       <a href={c.link} className="text-blue-600 hover:underline block mt-2">
                         View Course
                       </a>
