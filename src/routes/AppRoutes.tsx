@@ -28,6 +28,7 @@ const Security = React.lazy(() => import('../features/account/pages/Security'));
 const EditProfile = React.lazy(() => import('../features/account/pages/EditProfile'));
 const TransactionHistory = React.lazy(() => import('../features/account/pages/TransactionHistory'));
 const TransactionDetailPage = React.lazy(() => import('../features/account/pages/TransactionDetailPage'));
+const InsightPage = React.lazy(() => import('../features/career/pages/Copilot'));
 
 const LoadingScreen = ({ message }: { message: string }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -73,6 +74,7 @@ const AppRoutes: React.FC = () => {
           <Route path="code" element={<CodePage />} />
           <Route path="roadmap" element={<RoadmapPage />} />
           <Route path="career" element={<CareerPage />} />
+          <Route path="insight" element={<InsightPage />} />
           <Route path="upgrade" element={<UpgradePage />}>
             <Route path="checkout" element={<CheckoutModalWrapper />} />
           </Route>
