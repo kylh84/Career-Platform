@@ -20,6 +20,8 @@ const CodePage = React.lazy(() => import('../features/career/pages/CodePage'));
 const CVSuggestionPage = React.lazy(() => import('../features/career/pages/CVSuggestionPage'));
 const RoadmapPage = React.lazy(() => import('../features/career/pages/RoadmapPage'));
 const CareerPage = React.lazy(() => import('../features/career/pages/CareerPage'));
+const CopilotPage = React.lazy(() => import('../features/career/pages/Copilot'));
+const InsightPage = React.lazy(() => import('../features/career/pages/InsightPage'));
 const UpgradePage = React.lazy(() => import('../features/dashboard/pages/UpgradePage'));
 const AccountLayout = React.lazy(() => import('../features/account/pages/AccountLayout'));
 const Profile = React.lazy(() => import('../features/account/pages/Profile'));
@@ -28,7 +30,6 @@ const Security = React.lazy(() => import('../features/account/pages/Security'));
 const EditProfile = React.lazy(() => import('../features/account/pages/EditProfile'));
 const TransactionHistory = React.lazy(() => import('../features/account/pages/TransactionHistory'));
 const TransactionDetailPage = React.lazy(() => import('../features/account/pages/TransactionDetailPage'));
-const InsightPage = React.lazy(() => import('../features/career/pages/Copilot'));
 
 const LoadingScreen = ({ message }: { message: string }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -74,6 +75,7 @@ const AppRoutes: React.FC = () => {
           <Route path="code" element={<CodePage />} />
           <Route path="roadmap" element={<RoadmapPage />} />
           <Route path="career" element={<CareerPage />} />
+          <Route path="copilot" element={<CopilotPage />} />
           <Route path="insight" element={<InsightPage />} />
           <Route path="upgrade" element={<UpgradePage />}>
             <Route path="checkout" element={<CheckoutModalWrapper />} />
