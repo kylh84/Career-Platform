@@ -139,7 +139,7 @@ const Assistant: React.FC<AssistantProps> = ({ isFullPage = false }) => {
               : 'rounded-full border border-gray-100 w-16 h-16 flex items-center justify-center mt-1'
           }
         >
-          <img src={chatbotLogo} alt="ChatbotLogo" className={isFullPage ? 'w-20 h-20 sm:w-28 sm:h-28 object-contain' : 'w-12 h-12 object-contain'} />
+          <img src={chatbotLogo} alt="ChatbotLogo" className={isFullPage ? 'w-20 h-20 sm:w-28 sm:h-28 object-contain' : 'w-14 h-14 object-contain'} />
         </div>
       </div>
     </>
