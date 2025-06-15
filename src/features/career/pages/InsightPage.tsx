@@ -1,4 +1,6 @@
 import { FaRegLightbulb } from 'react-icons/fa';
+import { useEffect } from 'react';
+import { trackEvent } from '../../../config/firebase';
 
 const mockActivity = [
   { label: 'Total Sessions', value: 42 },
@@ -21,6 +23,38 @@ const recommendations = [
 ];
 
 const AnalyticsPage = () => {
+  // Track page view when component mounts
+  useEffect(() => {
+    trackEvent('insight_page_view', {
+      timestamp: new Date().toISOString(),
+    });
+  }, []);
+
+  // Track when user interacts with activity items
+  const handleActivityClick = (label: string) => {
+    trackEvent('insight_activity_click', {
+      activity_type: label,
+      timestamp: new Date().toISOString(),
+    });
+  };
+
+  // Track when user hovers over chart bars
+  const handleChartHover = (label: string, value: number) => {
+    trackEvent('insight_chart_interaction', {
+      page_type: label,
+      value: value,
+      timestamp: new Date().toISOString(),
+    });
+  };
+
+  // Track when user clicks on recommendations
+  const handleRecommendationClick = (title: string) => {
+    trackEvent('insight_recommendation_click', {
+      recommendation_title: title,
+      timestamp: new Date().toISOString(),
+    });
+  };
+
   return (
     <div className="max-w-3xl mx-auto p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold mb-8 text-start">Analytics & Recommendations</h1>
@@ -33,7 +67,11 @@ const AnalyticsPage = () => {
             <h2 className="text-xl font-semibold mb-6">User Activity</h2>
             <div className="space-y-4">
               {mockActivity.map((item) => (
-                <div key={item.label} className="flex items-center justify-between py-3 px-4 border border-gray-200 rounded-lg">
+                <div
+                  key={item.label}
+                  className="flex items-center justify-between py-3 px-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                  onClick={() => handleActivityClick(item.label)}
+                >
                   <span className="text-gray-700 font-medium">{item.label}</span>
                   <span className="text-2xl font-bold text-gray-900">{item.value}</span>
                 </div>
@@ -74,7 +112,7 @@ const AnalyticsPage = () => {
                   {/* Bars container */}
                   <div className="h-60 flex items-end justify-around px-4 relative z-10">
                     {mockVisited.map((item) => (
-                      <div key={item.label} className="flex flex-col items-center">
+                      <div key={item.label} className="flex flex-col items-center" onMouseEnter={() => handleChartHover(item.label, item.value)}>
                         <div className="bg-blue-500 rounded-t w-12 transition-all duration-300 hover:bg-blue-600" style={{ height: `${(item.value / 40) * 240}px` }}></div>
                       </div>
                     ))}
@@ -99,7 +137,7 @@ const AnalyticsPage = () => {
       <div className="bg-white rounded-lg shadow-sm p-8">
         <h2 className="text-xl font-semibold mb-6">Personalized Recommendations</h2>
         {recommendations.map((rec, idx) => (
-          <div key={idx} className="flex items-start p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+          <div key={idx} className="flex items-start p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => handleRecommendationClick(rec.title)}>
             <div className="mr-4 mt-1">
               <FaRegLightbulb className="w-6 h-6 text-blue-500" />
             </div>

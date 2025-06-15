@@ -1,19 +1,33 @@
 import React, { useState } from 'react';
+import { trackEvent } from '../../../config/firebase';
 
 const mockAdvice = 'Focus on building real projects, contribute to open source, and improve your communication skills.';
 
 const CareerPage: React.FC = () => {
   const [result, setResult] = useState<string | null>(null);
   const [isAsking, setIsAsking] = useState(false);
+  const [question, setQuestion] = useState('');
 
   const handleAsk = (e: React.FormEvent) => {
     e.preventDefault();
     setIsAsking(true);
 
+    // Track the question being asked
+    trackEvent('career_question_asked', {
+      question: question,
+      timestamp: new Date().toISOString(),
+    });
+
     // Simulate API call with a slight delay for better UX
     setTimeout(() => {
       setResult(mockAdvice);
       setIsAsking(false);
+
+      // Track when advice is received
+      trackEvent('career_advice_received', {
+        question: question,
+        has_advice: true,
+      });
     }, 800);
   };
 
@@ -24,9 +38,19 @@ const CareerPage: React.FC = () => {
         <form onSubmit={handleAsk} className="bg-white rounded-lg sm:rounded-xl shadow p-4 sm:p-6 md:p-8 w-full mb-4 sm:mb-6 md:mb-8">
           <div className="mb-4">
             <label className="block font-medium mb-1 text-base sm:text-lg">Your Question</label>
-            <input className="w-full border rounded px-3 py-2 text-sm sm:text-base" placeholder="e.g. How to become a backend developer?" />
+            <input
+              className="w-full border rounded px-3 py-2 text-sm sm:text-base"
+              placeholder="e.g. How to become a backend developer?"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+            />
           </div>
-          <button type="submit" className="w-full sm:w-auto px-6 py-2.5 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium text-sm sm:text-base relative" disabled={isAsking}>
+          <button
+            type="submit"
+            className="w-full sm:w-auto px-6 py-2.5 rounded-md text-white bg-blue-600 hover:bg-blue-700 font-medium text-sm sm:text-base relative"
+            disabled={isAsking}
+            onClick={() => trackEvent('career_guidance_button_click')}
+          >
             {isAsking ? (
               <>
                 <span className="opacity-0">Ask</span>
