@@ -1,6 +1,15 @@
 import { FaRegLightbulb } from 'react-icons/fa';
+// import { useEffect, useState } from 'react';
 import { useEffect } from 'react';
 import { trackEvent } from '../../../config/firebase';
+// import { RecommendationEngine } from '../services/recommendationEngine';
+
+// interface Recommendation {
+//   title: string;
+//   description: string;
+//   priority: number;
+//   type: 'cv' | 'skill' | 'career' | 'learning';
+// }
 
 const mockActivity = [
   { label: 'Total Sessions', value: 42 },
@@ -23,11 +32,30 @@ const recommendations = [
 ];
 
 const AnalyticsPage = () => {
+  // const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+
   // Track page view when component mounts
   useEffect(() => {
     trackEvent('insight_page_view', {
       timestamp: new Date().toISOString(),
     });
+
+    // Initialize recommendation engine with mock data
+    // const userActivity = {
+    //   totalSessions: mockActivity[0].value,
+    //   cvEvaluations: mockActivity[1].value,
+    //   careerQuizzes: mockActivity[2].value,
+    //   visitedPages: {
+    //     cv: mockVisited[0].value,
+    //     code: mockVisited[1].value,
+    //     road: mockVisited[2].value,
+    //     career: mockVisited[3].value,
+    //   },
+    // };
+
+    // const engine = new RecommendationEngine(userActivity);
+    // const newRecommendations = engine.getRecommendations();
+    // setRecommendations(newRecommendations);
   }, []);
 
   // Track when user interacts with activity items
@@ -143,6 +171,7 @@ const AnalyticsPage = () => {
             </div>
             <div>
               <h3 className="font-semibold text-gray-900 mb-1">{rec.title}</h3>
+              {/* <p className="text-gray-600">{rec.description}</p> */}
               <p className="text-gray-600">{rec.desc}</p>
             </div>
           </div>
