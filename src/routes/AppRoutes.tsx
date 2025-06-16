@@ -24,6 +24,7 @@ const CopilotPage = React.lazy(() => import('../features/career/pages/Copilot'))
 const InsightPage = React.lazy(() => import('../features/career/pages/InsightPage'));
 const UpgradePage = React.lazy(() => import('../features/dashboard/pages/UpgradePage'));
 const LearningTrackerPage = React.lazy(() => import('../features/career/pages/LearningTrackerPage'));
+const MockInterviewPage = React.lazy(() => import('../features/career/pages/MockInterviewPage'));
 const AccountLayout = React.lazy(() => import('../features/account/pages/AccountLayout'));
 const Profile = React.lazy(() => import('../features/account/pages/Profile'));
 const Subscription = React.lazy(() => import('../features/account/pages/Subscription'));
@@ -79,6 +80,7 @@ const AppRoutes: React.FC = () => {
           <Route path="copilot" element={<CopilotPage />} />
           <Route path="insight" element={<InsightPage />} />
           <Route path="learning-tracker" element={<LearningTrackerPage />} />
+          <Route path="mock-interview" element={<MockInterviewPage />} />
           <Route path="upgrade" element={<UpgradePage />}>
             <Route path="checkout" element={<CheckoutModalWrapper />} />
           </Route>
