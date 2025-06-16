@@ -13,7 +13,7 @@ interface UserActivity {
   };
 }
 
-interface Recommendation {
+export interface Recommendation {
   title: string;
   description: string;
   priority: number;
