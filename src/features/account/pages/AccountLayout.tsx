@@ -47,6 +47,10 @@ const AccountLayout: React.FC = () => {
     navigate('/dashboard/upgrade');
   };
 
+  const handleDashboard = () => {
+    navigate('/dashboard');
+  };
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -151,7 +155,10 @@ const AccountLayout: React.FC = () => {
             </div>
           ))}
           <div className=" flex flex-col gap-2 md:hidden">
-            <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center mt-6 gap-2 text-sm sm:text-base">
+            <Button onClick={handleDashboard} variant="primary" className="w-full flex items-center justify-center mt-6 gap-2 text-sm sm:text-base">
+              <FaArrowUpRightFromSquare className="text-base sm:text-lg" /> Dashboard
+            </Button>
+            <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
               <FaArrowUpRightFromSquare className="text-base sm:text-lg" /> Upgrade
             </Button>
             <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">

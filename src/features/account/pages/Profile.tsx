@@ -2,7 +2,6 @@ import React from 'react';
 import { useAppSelector } from '../../../store';
 import { Button } from '../../../components/common';
 import { useNavigate } from 'react-router-dom';
-import { IoMdArrowRoundBack } from 'react-icons/io';
 
 const Profile: React.FC = () => {
   const user = useAppSelector((state) => state.auth.user);
@@ -16,9 +15,6 @@ const Profile: React.FC = () => {
 
   return (
     <div className="max-w-md mx-auto bg-white rounded-xl shadow p-8">
-      <Button variant="link" className="mb-1 ml-[-25px] " onClick={() => navigate(-1)}>
-        <IoMdArrowRoundBack className="w-6 h-6 text-gray-500" />
-      </Button>
       <h2 className="text-3xl font-bold mb-6 text-center">Profile</h2>
       <div className="flex flex-col items-center mb-6">
         <img src={user?.image || ''} alt="avatar" className="w-20 h-20 rounded-full mb-2" />
@@ -50,6 +46,9 @@ const Profile: React.FC = () => {
       <div className="flex flex-col gap-2 mt-6">
         <Button variant="primary" onClick={() => navigate('/dashboard/account/edit')}>
           Edit
+        </Button>
+        <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+          Dashboard
         </Button>
         <Button variant="secondary" onClick={() => navigate('/dashboard/account/subscription')}>
           Change Plan
