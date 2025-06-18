@@ -37,8 +37,11 @@ const CareerPage: React.FC = () => {
         <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-left">Career Guidance</h2>
         <form onSubmit={handleAsk} className="bg-white rounded-lg sm:rounded-xl shadow p-4 sm:p-6 md:p-8 w-full mb-4 sm:mb-6 md:mb-8">
           <div className="mb-4">
-            <label className="block font-medium mb-1 text-base sm:text-lg">Your Question</label>
+            <label htmlFor="career-question" className="block font-medium mb-1 text-base sm:text-lg">
+              Your Question
+            </label>
             <input
+              id="career-question"
               className="w-full border rounded px-3 py-2 text-sm sm:text-base"
               placeholder="e.g. How to become a backend developer?"
               value={question}

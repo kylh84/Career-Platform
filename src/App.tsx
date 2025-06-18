@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store';
@@ -52,7 +52,7 @@ const ScrollToTop: React.FC = () => {
 };
 
 // Component chính để khởi tạo ứng dụng
-const App: React.FC = () => {
+const App: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   // Thêm state để theo dõi việc ứng dụng đã sẵn sàng chưa
   const [isAppReady, setIsAppReady] = useState(false);
   const [showLoading, setShowLoading] = useState(true);
@@ -97,18 +97,6 @@ const App: React.FC = () => {
     }
   }, [isAppReady]);
 
-  // Hiển thị loading screen khi ứng dụng chưa có dữ liệu
-  if (showLoading) {
-    return (
-      <div className={`min-h-screen flex items-center justify-center bg-gray-50 transition-opacity duration-400 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto"></div>
-          <p className="mt-3 text-gray-700">Đang tải ứng dụng...</p>
-        </div>
-      </div>
-    );
-  }
-
   // Sử dụng BrowserRouter thay vì HashRouter để có URL sạch hơn
   return (
     <ErrorBoundary>
@@ -118,8 +106,23 @@ const App: React.FC = () => {
             <ToastProvider>
               <ScrollToTop />
               <div className="app">
-                <AppRoutes />
-                <Assistant />
+                {showLoading ? (
+                  <div className={`min-h-screen flex items-center justify-center bg-gray-50 transition-opacity duration-400 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
+                    <div className="text-center">
+                      <div data-testid="loading-spinner" className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto"></div>
+                      <p className="mt-3 text-gray-700">Loading page...</p>
+                    </div>
+                  </div>
+                ) : (
+                  <Suspense fallback={null}>
+                    {children || (
+                      <>
+                        <AppRoutes />
+                        <Assistant />
+                      </>
+                    )}
+                  </Suspense>
+                )}
               </div>
             </ToastProvider>
           </I18nProvider>

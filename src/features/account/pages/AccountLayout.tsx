@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
-import { FaUser, FaCreditCard, FaShieldCat, FaArrowUpRightFromSquare, FaRightFromBracket, FaChevronDown, FaBars } from 'react-icons/fa6';
+import { FaUser, FaCreditCard, FaShieldCat, FaArrowUpRightFromSquare, FaTableColumns, FaRightFromBracket, FaChevronDown, FaBars } from 'react-icons/fa6';
 import { FaTimes } from 'react-icons/fa';
 import { MdOutlineManageHistory } from 'react-icons/md';
 import { useAppSelector, useAppDispatch } from '../../../store';
@@ -156,7 +156,7 @@ const AccountLayout: React.FC = () => {
           ))}
           <div className=" flex flex-col gap-2 md:hidden">
             <Button onClick={handleDashboard} variant="primary" className="w-full flex items-center justify-center mt-6 gap-2 text-sm sm:text-base">
-              <FaArrowUpRightFromSquare className="text-base sm:text-lg" /> Dashboard
+              <FaTableColumns className="text-base sm:text-lg" /> Dashboard
             </Button>
             <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
               <FaArrowUpRightFromSquare className="text-base sm:text-lg" /> Upgrade
@@ -167,13 +167,13 @@ const AccountLayout: React.FC = () => {
           </div>
         </nav>
         <div className="hidden md:block mt-6 space-y-2.5">
-          <Button onClick={handleDashboard} variant="primary" className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium hover:bg-blue-600 transition-colors">
-            <FaArrowUpRightFromSquare className="text-base" /> Dashboard
+          <Button onClick={handleDashboard} variant="primary" className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm sm:text-base font-medium hover:bg-blue-600 transition-colors">
+            <FaTableColumns className="text-base" /> Dashboard
           </Button>
-          <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium hover:bg-blue-600 transition-colors">
+          <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm sm:text-base font-medium hover:bg-blue-600 transition-colors">
             <FaArrowUpRightFromSquare className="text-base" /> Upgrade
           </Button>
-          <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm font-medium hover:bg-slate-700/80 transition-colors">
+          <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm sm:text-base font-medium hover:bg-slate-700/80 transition-colors">
             <FaRightFromBracket className="text-base" /> Log out
           </Button>
         </div>

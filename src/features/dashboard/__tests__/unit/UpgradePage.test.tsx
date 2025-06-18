@@ -1,112 +1,63 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Provider } from 'react-redux';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import configureStore from 'redux-mock-store';
 import UpgradePage from '../../pages/UpgradePage';
 
-const mockStore = configureStore([]);
-
-describe('UpgradePage Component', () => {
-  let store: ReturnType<typeof mockStore>;
-
-  beforeEach(() => {
-    store = mockStore({
-      subscription: {
-        currentPlan: 'free',
-        loading: false,
-        error: null,
-      },
-    });
-  });
-
-  const renderComponent = () => {
-    return render(
-      <Provider store={store}>
-        <BrowserRouter>
-          <UpgradePage />
-        </BrowserRouter>
-      </Provider>
+describe('UpgradePage', () => {
+  const renderComponent = () =>
+    render(
+      <BrowserRouter>
+        <UpgradePage />
+      </BrowserRouter>
     );
-  };
 
-  test('renders subscription plans', () => {
+  test('renders main sections', () => {
     renderComponent();
-    expect(screen.getByText(/Pro Plan/i)).toBeInTheDocument();
-    expect(screen.getByText(/Enterprise Plan/i)).toBeInTheDocument();
+    expect(screen.getByText(/upgrade to premium/i)).toBeInTheDocument();
+    expect(screen.getByText(/current plan/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/premium/i).length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText(/payment method/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /upgrade/i })).toBeInTheDocument();
   });
 
-  test('displays plan features', () => {
+  test('can switch billing cycle and see correct price', () => {
     renderComponent();
-    expect(screen.getByText(/Unlimited CV Reviews/i)).toBeInTheDocument();
-    expect(screen.getByText(/Priority Support/i)).toBeInTheDocument();
-    expect(screen.getByText(/Advanced Analytics/i)).toBeInTheDocument();
+    // Mặc định là monthly
+    expect(screen.getByText('$19.99')).toBeInTheDocument();
+    // Chuyển sang yearly
+    fireEvent.click(screen.getByRole('button', { name: /yearly/i }));
+    expect(screen.getByText('$199.99')).toBeInTheDocument();
+    // Chuyển lại monthly
+    fireEvent.click(screen.getByRole('button', { name: /monthly/i }));
+    expect(screen.getByText('$19.99')).toBeInTheDocument();
   });
 
-  test('shows current plan indicator', () => {
+  test('can select payment method', () => {
     renderComponent();
-    expect(screen.getByText(/Current Plan/i)).toBeInTheDocument();
-    expect(screen.getByText(/Free/i)).toBeInTheDocument();
+    // Mặc định là MoMo
+    const momoRadio = screen.getByRole('radio', { name: /momo/i });
+    expect(momoRadio).toBeChecked();
+    // Chọn VNPAY
+    const vnpayRadio = screen.getByRole('radio', { name: /vnpay/i });
+    fireEvent.click(vnpayRadio);
+    expect(vnpayRadio).toBeChecked();
+    // Chọn Card
+    const cardRadio = screen.getByRole('radio', { name: /visa o mastercard/i });
+    fireEvent.click(cardRadio);
+    expect(cardRadio).toBeChecked();
+    // Chọn Bank
+    const bankRadio = screen.getByRole('radio', { name: /bank/i });
+    fireEvent.click(bankRadio);
+    expect(bankRadio).toBeChecked();
   });
 
-  test('handles plan selection', () => {
+  test('shows processing state when upgrading', async () => {
     renderComponent();
-    const proPlanButton = screen.getByRole('button', { name: /Choose Pro/i });
-
-    fireEvent.click(proPlanButton);
-
-    const actions = store.getActions();
-    expect(actions).toContainEqual(
-      expect.objectContaining({
-        type: 'subscription/selectPlan',
-        payload: 'pro',
-      })
-    );
-  });
-
-  test('displays pricing information', () => {
-    renderComponent();
-    expect(screen.getByText(/\$9.99\/month/i)).toBeInTheDocument();
-    expect(screen.getByText(/\$29.99\/month/i)).toBeInTheDocument();
-  });
-
-  test('shows feature comparison', () => {
-    renderComponent();
-    const comparisonTable = screen.getByRole('table');
-    expect(comparisonTable).toBeInTheDocument();
-
-    expect(screen.getByText(/Feature Comparison/i)).toBeInTheDocument();
-    expect(screen.getAllByRole('row').length).toBeGreaterThan(1);
-  });
-
-  test('displays upgrade benefits', () => {
-    renderComponent();
-    expect(screen.getByText(/Benefits of Upgrading/i)).toBeInTheDocument();
-    expect(screen.getByText(/Access to premium features/i)).toBeInTheDocument();
-  });
-
-  test('handles loading state', () => {
-    store = mockStore({
-      subscription: {
-        currentPlan: 'free',
-        loading: true,
-        error: null,
-      },
-    });
-
-    renderComponent();
-    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
-  });
-
-  test('displays error message', () => {
-    store = mockStore({
-      subscription: {
-        currentPlan: 'free',
-        loading: false,
-        error: 'Failed to load subscription plans',
-      },
-    });
-
-    renderComponent();
-    expect(screen.getByText(/Failed to load subscription plans/i)).toBeInTheDocument();
+    const upgradeBtn = screen.getByRole('button', { name: /upgrade/i });
+    fireEvent.click(upgradeBtn);
+    expect(upgradeBtn).toBeDisabled();
+    expect(upgradeBtn).toHaveTextContent(/processing/i);
+    // Đợi hết processing
+    await waitFor(() => expect(upgradeBtn).not.toBeDisabled(), { timeout: 1500 });
+    expect(upgradeBtn).toHaveTextContent(/upgrade/i);
   });
 });

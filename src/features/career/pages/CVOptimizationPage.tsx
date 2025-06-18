@@ -41,7 +41,9 @@ const CVOptimizationPage: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-4 md:gap-6 p-4 sm:p-6">
             {/* CV Upload */}
             <div className="flex-1 flex flex-col">
-              <label className="block font-medium mb-2 w-full text-base sm:text-lg">CV</label>
+              <label htmlFor="cv-upload" className="block font-medium mb-2 w-full text-base sm:text-lg">
+                CV
+              </label>
               <div className="flex-1 flex flex-col items-center justify-center border border-gray-200 rounded-lg p-4 sm:p-6 bg-gray-50">
                 <label htmlFor="cv-upload" className="flex flex-col items-center justify-center w-full h-20 sm:h-24 cursor-pointer">
                   <FaRegFilePdf className="text-6xl sm:text-8xl text-gray-400 mb-2" />
@@ -53,8 +55,10 @@ const CVOptimizationPage: React.FC = () => {
             </div>
             {/* JD Input */}
             <div className="flex-1 flex flex-col">
-              <label className="block font-medium mb-2 text-base sm:text-lg">Job Description</label>
-              <textarea className="block w-full border border-gray-200 rounded-lg px-3 py-2 h-32 sm:h-36 resize-none bg-gray-50" />
+              <label htmlFor="jd-input" className="block font-medium mb-2 text-base sm:text-lg">
+                Job Description
+              </label>
+              <textarea id="jd-input" className="block w-full border border-gray-200 rounded-lg px-3 py-2 h-32 sm:h-36 resize-none bg-gray-50" />
             </div>
           </div>
           <div className="px-4 sm:px-6 pb-4 sm:pb-6">
