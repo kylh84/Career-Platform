@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">30.76% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>13/13</span>
+                <span class='fraction'>4/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">96.55% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>28/29</span>
+                <span class='fraction'>0/29</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">30.76% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>13/13</span>
+                <span class='fraction'>4/13</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -193,44 +193,44 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -295,22 +295,22 @@ export interface CheckboxProps extends Omit&lt;React.InputHTMLAttributes&lt;HTML
  * Checkbox component with support for labels, descriptions, and error states
  */
 const Checkbox = forwardRef&lt;HTMLInputElement, CheckboxProps&gt;(
-  ({ label, description, size = 'md', variant = 'primary', error, isInvalid = false, disabled = false, className = '', wrapperClassName = '', id: providedId, ...props }, ref) =&gt; {
-    const uniqueId = useId();
-    const id = providedId || uniqueId;
+<span class="fstat-no" title="function not covered" >  ({</span> label, description, size = <span class="branch-0 cbranch-no" title="branch not covered" >'md',</span> variant = <span class="branch-0 cbranch-no" title="branch not covered" >'primary',</span> error, isInvalid = <span class="branch-0 cbranch-no" title="branch not covered" >false,</span> disabled = <span class="branch-0 cbranch-no" title="branch not covered" >false,</span> className = <span class="branch-0 cbranch-no" title="branch not covered" >'',</span> wrapperClassName = <span class="branch-0 cbranch-no" title="branch not covered" >'',</span> id: providedId, ...props }, ref) =&gt; {
+    const uniqueId = <span class="cstat-no" title="statement not covered" >useId();</span>
+    const id = <span class="cstat-no" title="statement not covered" >providedId || uniqueId;</span>
 &nbsp;
     // Base classes for the checkbox input
-    const baseInputClasses = 'form-checkbox rounded transition-all duration-200 cursor-pointer';
+    const baseInputClasses = <span class="cstat-no" title="statement not covered" >'form-checkbox rounded transition-all duration-200 cursor-pointer';</span>
 &nbsp;
     // Size classes
-    const sizeClasses = {
+    const sizeClasses = <span class="cstat-no" title="statement not covered" >{</span>
       sm: 'h-3 w-3',
       md: 'h-4 w-4',
       lg: 'h-5 w-5',
     };
 &nbsp;
     // Variant classes (colors)
-    const variantClasses = {
+    const variantClasses = <span class="cstat-no" title="statement not covered" >{</span>
       primary: 'text-blue-600 focus:ring-blue-500',
       secondary: 'text-gray-600 focus:ring-gray-500',
       success: 'text-green-600 focus:ring-green-500',
@@ -319,21 +319,21 @@ const Checkbox = forwardRef&lt;HTMLInputElement, CheckboxProps&gt;(
     };
 &nbsp;
     // State classes
-    const stateClasses = {
+    const stateClasses = <span class="cstat-no" title="statement not covered" >{</span>
       disabled: disabled ? 'opacity-50 cursor-not-allowed' : '',
       error: isInvalid ? 'border-red-500 focus:ring-red-500' : '',
     };
 &nbsp;
     // Label size classes
-    const labelSizeClasses = {
+    const labelSizeClasses = <span class="cstat-no" title="statement not covered" >{</span>
       sm: 'text-sm',
       md: 'text-base',
       lg: 'text-lg',
     };
 &nbsp;
-    const inputClasses = [baseInputClasses, sizeClasses[size], variantClasses[variant], stateClasses.disabled, stateClasses.error, className].join(' ');
+    const inputClasses = <span class="cstat-no" title="statement not covered" >[baseInputClasses, sizeClasses[size], variantClasses[variant], stateClasses.disabled, stateClasses.error, className].join(' ');</span>
 &nbsp;
-    return (
+<span class="cstat-no" title="statement not covered" >    return (</span>
       &lt;div className={`flex flex-col ${wrapperClassName}`}&gt;
         &lt;label className={`inline-flex items-start ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}&gt;
           &lt;div className="flex items-center h-5"&gt;
@@ -348,7 +348,7 @@ const Checkbox = forwardRef&lt;HTMLInputElement, CheckboxProps&gt;(
               {...props}
             /&gt;
           &lt;/div&gt;
-          {(label || <span class="branch-1 cbranch-no" title="branch not covered" >description)</span> &amp;&amp; (
+          {(label || description) &amp;&amp; (
             &lt;div className="ml-2"&gt;
               {label &amp;&amp; &lt;span className={`${labelSizeClasses[size]} ${disabled ? 'text-gray-500' : 'text-gray-900'}`}&gt;{label}&lt;/span&gt;}
               {description &amp;&amp; (
@@ -379,7 +379,7 @@ export default Checkbox;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-28T10:43:20.101Z
+                at 2025-06-11T09:47:17.169Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

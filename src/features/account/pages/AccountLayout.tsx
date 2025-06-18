@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
-import { FaUser, FaCreditCard, FaShieldCat, FaArrowUpRightFromSquare, FaRightFromBracket, FaBars } from 'react-icons/fa6';
+import { FaUser, FaCreditCard, FaShieldCat, FaArrowUpRightFromSquare, FaRightFromBracket, FaChevronDown, FaBars } from 'react-icons/fa6';
 import { FaTimes } from 'react-icons/fa';
+import { MdOutlineManageHistory } from 'react-icons/md';
 import { useAppSelector, useAppDispatch } from '../../../store';
 import { Button } from '../../../components/common';
 import { logout } from '../../../features/auth/slice';
@@ -9,7 +10,12 @@ import { useNavigate } from 'react-router-dom';
 
 const accountMenu = [
   { label: 'Profile', path: 'profile', icon: <FaUser size={20} /> },
-  { label: 'Subscription', path: 'subscription', icon: <FaCreditCard size={20} /> },
+  {
+    label: 'Subscription',
+    path: 'subscription/manage',
+    icon: <FaCreditCard size={20} />,
+    submenu: [{ label: 'Transactions History', path: 'subscription/transactions', icon: <MdOutlineManageHistory size={20} /> }],
+  },
   { label: 'Security', path: 'security', icon: <FaShieldCat size={20} /> },
 ];
 
@@ -18,6 +24,7 @@ const AccountLayout: React.FC = () => {
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
 
   // Close sidebar on window resize if screen becomes larger
   useEffect(() => {
@@ -50,6 +57,10 @@ const AccountLayout: React.FC = () => {
     }
   };
 
+  const toggleSubmenu = (label: string) => {
+    setExpandedMenu(expandedMenu === label ? null : label);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile Header */}
@@ -79,26 +90,83 @@ const AccountLayout: React.FC = () => {
         </div>
         <nav className="flex-1 space-y-1 sm:space-y-2">
           {accountMenu.map((item) => (
-            <NavLink
-              key={item.label}
-              to={item.path}
-              onClick={handleNavigation}
-              className={({ isActive }) =>
-                `flex items-center w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-colors gap-2 sm:gap-3
-                ${isActive ? 'bg-slate-600/80 text-white shadow' : 'hover:bg-slate-700/80 text-white'}`
-              }
-            >
-              <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
-              {item.label}
-            </NavLink>
+            <div key={item.label} className="relative">
+              {item.submenu ? (
+                <div className="flex items-center">
+                  {/* NavLink cho label Subscription */}
+                  <NavLink
+                    to={item.path}
+                    onClick={handleNavigation}
+                    className={({ isActive }) =>
+                      `flex items-center flex-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all gap-2 sm:gap-3
+                      ${isActive ? 'bg-slate-600/80 text-white shadow' : 'hover:bg-slate-700/80 text-white'}`
+                    }
+                    style={{ minWidth: 0 }}
+                  >
+                    <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
+                    <span className="truncate">{item.label}</span>
+                  </NavLink>
+                  {/* Nút mở/collapse submenu */}
+                  <button onClick={() => toggleSubmenu(item.label)} className="flex items-center px-2 focus:outline-none" tabIndex={-1} aria-label="Toggle submenu">
+                    <FaChevronDown className={`transition-transform duration-300 ease-in-out ${expandedMenu === item.label ? 'rotate-180' : ''}`} size={14} />
+                  </button>
+                </div>
+              ) : (
+                <NavLink
+                  to={item.path}
+                  onClick={handleNavigation}
+                  className={({ isActive }) =>
+                    `flex items-center w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-colors gap-2 sm:gap-3
+                    ${isActive ? 'bg-slate-600/80 text-white shadow' : 'hover:bg-slate-700/80 text-white'}`
+                  }
+                >
+                  <span className="w-5 h-5 flex items-center justify-center">{item.icon}</span>
+                  {item.label}
+                </NavLink>
+              )}
+              {/* Submenu */}
+              {item.submenu && (
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out
+                    ${expandedMenu === item.label ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}
+                >
+                  <div className="pl-8 pr-2 py-1 space-y-1">
+                    {item.submenu.map((sub) => (
+                      <NavLink
+                        key={sub.label}
+                        to={sub.path}
+                        onClick={handleNavigation}
+                        className={({ isActive }) =>
+                          `flex items-center w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors gap-2
+                          ${isActive ? 'bg-slate-500/80 text-white shadow' : 'hover:bg-slate-700/60 text-blue-100'}`
+                        }
+                      >
+                        <span className="w-4 h-4 flex items-center justify-center">{sub.icon}</span>
+                        {sub.label}
+                      </NavLink>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           ))}
+          <div className=" flex flex-col gap-2 md:hidden">
+            <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center mt-6 gap-2 text-sm sm:text-base">
+              <FaArrowUpRightFromSquare className="text-base sm:text-lg" /> Upgrade
+            </Button>
+            <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
+              <FaRightFromBracket className="text-base sm:text-lg" /> Log out
+            </Button>
+          </div>
         </nav>
-        <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center gap-2 mb-3 sm:mb-4 text-sm sm:text-base">
-          <FaArrowUpRightFromSquare className="text-base sm:text-lg" /> Upgrade
-        </Button>
-        <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
-          <FaRightFromBracket className="text-base sm:text-lg" /> Log out
-        </Button>
+        <div className="hidden md:block mt-6 space-y-3">
+          <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
+            <FaArrowUpRightFromSquare className="text-base sm:text-lg" /> Upgrade
+          </Button>
+          <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
+            <FaRightFromBracket className="text-base sm:text-lg" /> Log out
+          </Button>
+        </div>
       </aside>
 
       {/* Main content */}

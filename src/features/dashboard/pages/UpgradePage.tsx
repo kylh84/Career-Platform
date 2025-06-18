@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { FaCreditCard, FaUniversity } from 'react-icons/fa';
-import CheckoutModal from '../components/CheckoutModal';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 const UpgradePage: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedPayment, setSelectedPayment] = useState<'momo' | 'vnpay' | 'card' | 'bank'>('momo');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [checkoutData, setCheckoutData] = useState<{
     amount: number;
     orderId: string;
     qrCode: string;
     expiryTime: number;
   } | null>(null);
+  const navigate = useNavigate();
 
   const upgradeData = {
     plan: 'Freemium',
@@ -39,31 +39,27 @@ const UpgradePage: React.FC = () => {
   const handleUpgrade = async () => {
     try {
       setIsProcessing(true);
-
       // In a real application, this would be an API call to create an order
       const orderData = {
         amount: currentPlan.price,
         paymentMethod: selectedPayment,
         billingCycle: billingCycle,
       };
-
       // Simulate API call with orderData
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
       // Mock response based on orderData
       const response = {
         orderId: 'ORDER123',
         qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://payment.momo.vn/${orderData.amount}`,
         expiryTime: 300, // 5 minutes
       };
-
       setCheckoutData({
         amount: orderData.amount,
         orderId: response.orderId,
         qrCode: response.qrCode,
         expiryTime: response.expiryTime,
       });
-      setShowCheckoutModal(true);
+      navigate('checkout');
     } catch (error) {
       console.error('Error creating order:', error);
       // Handle error (show error message to user)
@@ -76,7 +72,6 @@ const UpgradePage: React.FC = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-md mx-auto p-8 bg-white rounded-2xl shadow-lg">
         <h1 className="text-[32px] text-center font-bold mb-8">Upgrade to Premium</h1>
-
         {/* Current Plan & Billing Cycle */}
         <div className="mb-2">
           <div className="flex items-center justify-between mb-2">
@@ -98,7 +93,6 @@ const UpgradePage: React.FC = () => {
           </div>
           <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">{upgradeData.plan}</div>
         </div>
-
         {/* Premium Plan */}
         <div className="text-black rounded-xl overflow-hidden mb-6 border-2 border-blue-700">
           <div className="bg-blue-600 px-4 py-3">
@@ -122,7 +116,6 @@ const UpgradePage: React.FC = () => {
             </ul>
           </div>
         </div>
-
         {/* Payment Method */}
         <div>
           <label className="block text-[16px] font-medium mb-3">Payment Method</label>
@@ -157,7 +150,6 @@ const UpgradePage: React.FC = () => {
             </label>
           </div>
         </div>
-
         {/* Upgrade Button */}
         <button
           onClick={handleUpgrade}
@@ -167,11 +159,19 @@ const UpgradePage: React.FC = () => {
           {isProcessing ? 'Processing...' : 'Upgrade'}
         </button>
       </div>
-
-      {/* Checkout Modal */}
-      {checkoutData && (
-        <CheckoutModal isOpen={showCheckoutModal} onClose={() => setShowCheckoutModal(false)} amount={checkoutData.amount} qrCode={checkoutData.qrCode} expiryTime={checkoutData.expiryTime} />
-      )}
+      {/* Checkout Modal qua Outlet */}
+      <Outlet
+        context={{
+          checkoutData: checkoutData
+            ? {
+                amount: checkoutData.amount,
+                qrCode: checkoutData.qrCode,
+                expiryTime: checkoutData.expiryTime,
+              }
+            : undefined,
+          onClose: () => navigate(-1),
+        }}
+      />
     </div>
   );
 };

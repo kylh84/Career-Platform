@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">44.44% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>9/9</span>
+                <span class='fraction'>4/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>9/9</span>
+                <span class='fraction'>0/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/1</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">44.44% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>9/9</span>
+                <span class='fraction'>4/9</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -137,23 +137,23 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -186,24 +186,24 @@ export interface CardProps extends React.HTMLAttributes&lt;HTMLDivElement&gt; {
 /**
  * Card component for displaying content in a contained, styled container
  */
-const Card = React.forwardRef&lt;HTMLDivElement, CardProps&gt;(({ variant = 'elevated', size = 'md', hoverable = false, isFullWidth = false, className = '', children, ...props }, ref) =&gt; {
-  const variantClasses = {
+const Card = React.forwardRef&lt;HTMLDivElement, CardProps&gt;(<span class="fstat-no" title="function not covered" >({</span> variant = <span class="branch-0 cbranch-no" title="branch not covered" >'elevated',</span> size = <span class="branch-0 cbranch-no" title="branch not covered" >'md',</span> hoverable = <span class="branch-0 cbranch-no" title="branch not covered" >false,</span> isFullWidth = <span class="branch-0 cbranch-no" title="branch not covered" >false,</span> className = <span class="branch-0 cbranch-no" title="branch not covered" >'',</span> children, ...props }, ref) =&gt; {
+  const variantClasses = <span class="cstat-no" title="statement not covered" >{</span>
     elevated: 'bg-white shadow-md',
     outlined: 'bg-white border border-gray-200',
     filled: 'bg-gray-50',
   };
 &nbsp;
-  const sizeClasses = {
+  const sizeClasses = <span class="cstat-no" title="statement not covered" >{</span>
     sm: 'p-3',
     md: 'p-4',
     lg: 'p-6',
   };
 &nbsp;
-  const hoverClasses = hoverable ? 'hover:transform hover:-translate-y-1 hover:shadow-lg cursor-pointer' : '';
+  const hoverClasses = <span class="cstat-no" title="statement not covered" >hoverable ? 'hover:transform hover:-translate-y-1 hover:shadow-lg cursor-pointer' : '';</span>
 &nbsp;
-  const widthClass = isFullWidth ? 'w-full' : '';
+  const widthClass = <span class="cstat-no" title="statement not covered" >isFullWidth ? 'w-full' : '';</span>
 &nbsp;
-  return (
+<span class="cstat-no" title="statement not covered" >  return (</span>
     &lt;div ref={ref} data-testid="card" className={`rounded-lg transition-all duration-200 ${variantClasses[variant]} ${sizeClasses[size]} ${hoverClasses} ${widthClass} ${className}`} {...props}&gt;
       {children}
     &lt;/div&gt;
@@ -220,7 +220,7 @@ export default Card;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-28T10:43:20.101Z
+                at 2025-06-11T09:47:17.169Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

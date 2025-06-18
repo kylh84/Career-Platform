@@ -1,9 +1,10 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { FaIdCard, FaUserLarge, FaBriefcase, FaCode, FaMap, FaChevronDown, FaBars } from 'react-icons/fa6';
+import { FaIdCard, FaUserLarge, FaBriefcase, FaCode, FaMap, FaChevronDown, FaBars, FaCalendarCheck, FaComments } from 'react-icons/fa6';
 import { FaTimes } from 'react-icons/fa';
+import { VscCopilot } from 'react-icons/vsc';
+import { SiGoogleanalytics } from 'react-icons/si';
 import { useState, useEffect } from 'react';
 import React from 'react';
-
 interface DashboardLayoutProps {
   children?: React.ReactNode;
 }
@@ -21,6 +22,10 @@ const sidebarMenu = [
   { label: 'Code', path: 'code', icon: <FaCode size={20} /> },
   { label: 'Roadmap', path: 'roadmap', icon: <FaMap size={20} /> },
   { label: 'Career', path: 'career', icon: <FaBriefcase size={20} /> },
+  { label: 'Mock Interview', path: 'mock-interview', icon: <FaComments size={20} /> },
+  { label: 'Learning Tracker', path: 'learning-tracker', icon: <FaCalendarCheck size={20} /> },
+  { label: 'AI Copilot', path: 'copilot', icon: <VscCopilot size={20} /> },
+  { label: 'Insight', path: 'insight', icon: <SiGoogleanalytics size={20} /> },
   { label: 'Account', path: 'account/profile', icon: <FaUserLarge size={20} /> },
 ];
 
