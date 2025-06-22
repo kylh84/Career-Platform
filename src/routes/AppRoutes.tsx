@@ -7,13 +7,14 @@ import { useAppSelector } from '../store';
 import CancelSubscriptionModal from '../features/account/components/CancelSubscriptionModal';
 import CheckoutModal from '../features/dashboard/components/CheckoutModal';
 import type { CheckoutModalProps } from '../features/dashboard/components/CheckoutModal';
+import DashboardLayout from '../features/dashboard/pages/DashboardLayout';
+import { AccountLayout } from '../features/account';
 
 // Lazy load public pages
 const Home = React.lazy(() => import('../pages/home/Home'));
 const ErrorPage = React.lazy(() => import('../pages/error-pages/404Error'));
 
 // Lazy load dashboard and account pages
-const DashboardLayout = React.lazy(() => import('../features/dashboard/pages/DashboardLayout'));
 const DashboardHome = React.lazy(() => import('../features/dashboard/pages/DashboardHome'));
 const CVOptimizationPage = React.lazy(() => import('../features/career/pages/CVOptimizationPage'));
 const CodePage = React.lazy(() => import('../features/career/pages/CodePage'));
@@ -25,7 +26,6 @@ const InsightPage = React.lazy(() => import('../features/career/pages/InsightPag
 const UpgradePage = React.lazy(() => import('../features/dashboard/pages/UpgradePage'));
 const LearningTrackerPage = React.lazy(() => import('../features/career/pages/LearningTrackerPage'));
 const MockInterviewPage = React.lazy(() => import('../features/career/pages/MockInterviewPage'));
-const AccountLayout = React.lazy(() => import('../features/account/pages/AccountLayout'));
 const Profile = React.lazy(() => import('../features/account/pages/Profile'));
 const Subscription = React.lazy(() => import('../features/account/pages/Subscription'));
 const Security = React.lazy(() => import('../features/account/pages/Security'));
