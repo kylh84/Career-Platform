@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, startTransition } from 'react';
 import { Button } from '../../components/common';
 import { useAppSelector, useAppDispatch } from '../../store';
 import { logout } from '../../features/auth/slice';
@@ -17,7 +17,9 @@ const Header: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/home');
+    startTransition(() => {
+      navigate('/home');
+    });
   };
 
   const toggleMenu = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, startTransition } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '../../../components/common';
 import { logout } from '../../../features/auth/slice';
@@ -48,7 +48,9 @@ const AccountLayout: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/home');
+    startTransition(() => {
+      navigate('/home');
+    });
   };
 
   const handleUpgrade = () => {
