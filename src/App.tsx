@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store';
@@ -100,14 +100,12 @@ const AppContent: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
           </div>
         </div>
       ) : (
-        <Suspense fallback={null}>
-          {children || (
-            <>
-              <AppRoutes />
-              {isAuthenticated && <Assistant />}
-            </>
-          )}
-        </Suspense>
+        children || (
+          <>
+            <AppRoutes />
+            {isAuthenticated && <Assistant />}
+          </>
+        )
       )}
     </div>
   );

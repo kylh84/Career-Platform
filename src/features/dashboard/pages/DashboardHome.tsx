@@ -12,7 +12,7 @@ const features = [
     icon: cardProfileIcon,
     title: 'CV Optimization',
     desc: 'Improve your resume with AI-driven insights',
-    path: '/dashboard/cv',
+    path: '/dashboard/cv/optimization',
   },
   {
     icon: programIcon,

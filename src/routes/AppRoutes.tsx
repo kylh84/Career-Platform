@@ -15,6 +15,7 @@ const Home = React.lazy(() => import('../pages/home/Home'));
 const ErrorPage = React.lazy(() => import('../pages/error-pages/404Error'));
 
 // Lazy load dashboard and account pages
+
 const DashboardHome = React.lazy(() => import('../features/dashboard/pages/DashboardHome'));
 const CVOptimizationPage = React.lazy(() => import('../features/career/pages/CVOptimizationPage'));
 const CodePage = React.lazy(() => import('../features/career/pages/CodePage'));

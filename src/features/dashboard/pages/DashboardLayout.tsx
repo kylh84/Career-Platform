@@ -1,10 +1,28 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import PageSkeleton from '../../../components/skeletons/PageSkeleton';
+import SuspenseWithDelay from '../../../components/SuspenseWithDelay';
 import { FaIdCard, FaUserLarge, FaBriefcase, FaCode, FaMap, FaChevronDown, FaBars, FaCalendarCheck, FaComments } from 'react-icons/fa6';
 import { FaTimes } from 'react-icons/fa';
 import { VscCopilot } from 'react-icons/vsc';
 import { SiGoogleanalytics } from 'react-icons/si';
-import { useState, useEffect } from 'react';
-import React from 'react';
+
+// --- Prefetcher functions for lazy-loaded pages ---
+// For a larger application, consider moving these to a dedicated 'src/routes/prefetchers.ts' file.
+const prefetchCVOptimization = () => import('../../career/pages/CVOptimizationPage');
+const prefetchCVSuggestion = () => import('../../career/pages/CVSuggestionPage');
+const prefetchCode = () => import('../../career/pages/CodePage');
+const prefetchRoadmap = () => import('../../career/pages/RoadmapPage');
+const prefetchCareer = () => import('../../career/pages/CareerPage');
+const prefetchMockInterview = () => import('../../career/pages/MockInterviewPage');
+const prefetchLearningTracker = () => import('../../career/pages/LearningTrackerPage');
+const prefetchCopilot = () => import('../../career/pages/Copilot');
+const prefetchInsight = () => import('../../career/pages/InsightPage');
+// The 'Account' link navigates to a different layout, but we can still prefetch its main page.
+const prefetchAccountProfile = () => import('../../account/pages/Profile');
+
 interface DashboardLayoutProps {
   children?: React.ReactNode;
 }
@@ -15,22 +33,23 @@ const sidebarMenu = [
     path: 'cv',
     icon: <FaIdCard size={20} />,
     submenu: [
-      { label: 'CV Optimization', path: 'cv/optimization' },
-      { label: 'CV Presentation Suggestions', path: 'cv/presentation-suggestions' },
+      { label: 'CV Optimization', path: 'cv/optimization', prefetch: prefetchCVOptimization },
+      { label: 'CV Presentation Suggestions', path: 'cv/presentation-suggestions', prefetch: prefetchCVSuggestion },
     ],
   },
-  { label: 'Code', path: 'code', icon: <FaCode size={20} /> },
-  { label: 'Roadmap', path: 'roadmap', icon: <FaMap size={20} /> },
-  { label: 'Career', path: 'career', icon: <FaBriefcase size={20} /> },
-  { label: 'Mock Interview', path: 'mock-interview', icon: <FaComments size={20} /> },
-  { label: 'Learning Tracker', path: 'learning-tracker', icon: <FaCalendarCheck size={20} /> },
-  { label: 'AI Copilot', path: 'copilot', icon: <VscCopilot size={20} /> },
-  { label: 'Insight', path: 'insight', icon: <SiGoogleanalytics size={20} /> },
-  { label: 'Account', path: 'account/profile', icon: <FaUserLarge size={20} /> },
+  { label: 'Code', path: 'code', icon: <FaCode size={20} />, prefetch: prefetchCode },
+  { label: 'Roadmap', path: 'roadmap', icon: <FaMap size={20} />, prefetch: prefetchRoadmap },
+  { label: 'Career', path: 'career', icon: <FaBriefcase size={20} />, prefetch: prefetchCareer },
+  { label: 'Mock Interview', path: 'mock-interview', icon: <FaComments size={20} />, prefetch: prefetchMockInterview },
+  { label: 'Learning Tracker', path: 'learning-tracker', icon: <FaCalendarCheck size={20} />, prefetch: prefetchLearningTracker },
+  { label: 'AI Copilot', path: 'copilot', icon: <VscCopilot size={20} />, prefetch: prefetchCopilot },
+  { label: 'Insight', path: 'insight', icon: <SiGoogleanalytics size={20} />, prefetch: prefetchInsight },
+  { label: 'Account', path: 'account/profile', icon: <FaUserLarge size={20} />, prefetch: prefetchAccountProfile },
 ];
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -109,6 +128,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                         <NavLink
                           key={subItem.path}
                           to={subItem.path}
+                          onMouseEnter={subItem.prefetch}
                           onClick={handleNavigation}
                           className={({ isActive }) =>
                             `block px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ease-in-out
@@ -124,6 +144,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               ) : (
                 <NavLink
                   to={item.path}
+                  onMouseEnter={item.prefetch}
                   onClick={handleNavigation}
                   className={({ isActive }) =>
                     `flex items-center px-3 py-2.5 rounded-lg text-sm sm:text-base font-medium transition-colors gap-3
@@ -146,8 +167,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           md:ml-[240px]
           pt-16 md:pt-0`}
       >
-        <Outlet />
-        {children}
+        <SuspenseWithDelay fallback={<PageSkeleton />} minDuration={1000}>
+          <AnimatePresence mode="wait">
+            <motion.div key={location.pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+              <Outlet />
+              {children}
+            </motion.div>
+          </AnimatePresence>
+        </SuspenseWithDelay>
       </main>
     </div>
   );

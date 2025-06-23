@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Button } from '../../../components/common';
+import { logout } from '../../../features/auth/slice';
+import { useAppSelector, useAppDispatch } from '../../../store';
 import { FaUser, FaCreditCard, FaShieldCat, FaArrowUpRightFromSquare, FaTableColumns, FaRightFromBracket, FaChevronDown, FaBars } from 'react-icons/fa6';
 import { FaTimes } from 'react-icons/fa';
 import { MdOutlineManageHistory } from 'react-icons/md';
-import { useAppSelector, useAppDispatch } from '../../../store';
-import { Button } from '../../../components/common';
-import { logout } from '../../../features/auth/slice';
-import { useNavigate } from 'react-router-dom';
+import PageSkeleton from '../../../components/skeletons/PageSkeleton';
+import SuspenseWithDelay from '../../../components/SuspenseWithDelay';
+
+// --- Prefetcher functions for lazy-loaded account pages ---
+const prefetchProfile = () => import('./Profile');
+const prefetchSubscription = () => import('./Subscription');
+const prefetchSecurity = () => import('./Security');
+const prefetchTransactions = () => import('./TransactionHistory');
 
 const accountMenu = [
-  { label: 'Profile', path: 'profile', icon: <FaUser size={20} /> },
+  { label: 'Profile', path: 'profile', icon: <FaUser size={20} />, prefetch: prefetchProfile },
   {
     label: 'Subscription',
     path: 'subscription/manage',
     icon: <FaCreditCard size={20} />,
-    submenu: [{ label: 'Transactions History', path: 'subscription/transactions', icon: <MdOutlineManageHistory size={20} /> }],
+    prefetch: prefetchSubscription,
+    submenu: [{ label: 'Transactions History', path: 'subscription/transactions', icon: <MdOutlineManageHistory size={20} />, prefetch: prefetchTransactions }],
   },
-  { label: 'Security', path: 'security', icon: <FaShieldCat size={20} /> },
+  { label: 'Security', path: 'security', icon: <FaShieldCat size={20} />, prefetch: prefetchSecurity },
 ];
 
 const AccountLayout: React.FC = () => {
@@ -100,6 +108,7 @@ const AccountLayout: React.FC = () => {
                   {/* NavLink cho label Subscription */}
                   <NavLink
                     to={item.path}
+                    onMouseEnter={item.prefetch}
                     onClick={handleNavigation}
                     className={({ isActive }) =>
                       `flex items-center flex-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all gap-2 sm:gap-3
@@ -118,6 +127,7 @@ const AccountLayout: React.FC = () => {
               ) : (
                 <NavLink
                   to={item.path}
+                  onMouseEnter={item.prefetch}
                   onClick={handleNavigation}
                   className={({ isActive }) =>
                     `flex items-center w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-colors gap-2 sm:gap-3
@@ -139,6 +149,7 @@ const AccountLayout: React.FC = () => {
                       <NavLink
                         key={sub.label}
                         to={sub.path}
+                        onMouseEnter={sub.prefetch}
                         onClick={handleNavigation}
                         className={({ isActive }) =>
                           `flex items-center w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors gap-2
@@ -173,7 +184,7 @@ const AccountLayout: React.FC = () => {
           <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm sm:text-base font-medium hover:bg-blue-600 transition-colors">
             <FaArrowUpRightFromSquare className="text-base" /> Upgrade
           </Button>
-          <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm sm:text-base font-medium hover:bg-slate-700/80 transition-colors">
+          <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm sm:text-base font-medium hover:bg-gray-400 transition-colors">
             <FaRightFromBracket className="text-base" /> Log out
           </Button>
         </div>
@@ -187,7 +198,9 @@ const AccountLayout: React.FC = () => {
           pt-16 md:pt-0`}
       >
         <div className="p-4 sm:p-6 md:p-10">
-          <Outlet />
+          <SuspenseWithDelay fallback={<PageSkeleton />} minDuration={1000}>
+            <Outlet />
+          </SuspenseWithDelay>
         </div>
       </main>
     </div>
