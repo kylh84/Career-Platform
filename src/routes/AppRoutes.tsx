@@ -5,17 +5,15 @@ import SignUpForm from '../features/auth/components/SignUpForm';
 import PrivateRoute from './PrivateRoute';
 import { useAppSelector } from '../store';
 import CancelSubscriptionModal from '../features/account/components/CancelSubscriptionModal';
-import CheckoutModal from '../features/dashboard/components/CheckoutModal';
-import type { CheckoutModalProps } from '../features/dashboard/components/CheckoutModal';
 import DashboardLayout from '../features/dashboard/pages/DashboardLayout';
 import { AccountLayout } from '../features/account';
+import AccountUpgradePage from '../features/account/pages/AccountUpgradePage';
 
 // Lazy load public pages
 const Home = React.lazy(() => import('../pages/home/Home'));
 const ErrorPage = React.lazy(() => import('../pages/error-pages/404Error'));
 
 // Lazy load dashboard and account pages
-
 const DashboardHome = React.lazy(() => import('../features/dashboard/pages/DashboardHome'));
 const CVOptimizationPage = React.lazy(() => import('../features/career/pages/CVOptimizationPage'));
 const CodePage = React.lazy(() => import('../features/career/pages/CodePage'));
@@ -24,7 +22,6 @@ const RoadmapPage = React.lazy(() => import('../features/career/pages/RoadmapPag
 const CareerPage = React.lazy(() => import('../features/career/pages/CareerPage'));
 const CopilotPage = React.lazy(() => import('../features/career/pages/Copilot'));
 const InsightPage = React.lazy(() => import('../features/career/pages/InsightPage'));
-const UpgradePage = React.lazy(() => import('../features/dashboard/pages/UpgradePage'));
 const LearningTrackerPage = React.lazy(() => import('../features/career/pages/LearningTrackerPage'));
 const MockInterviewPage = React.lazy(() => import('../features/career/pages/MockInterviewPage'));
 const Profile = React.lazy(() => import('../features/account/pages/Profile'));
@@ -72,9 +69,6 @@ const AppRoutes: React.FC = () => {
         <Route path="insight" element={<InsightPage />} />
         <Route path="learning-tracker" element={<LearningTrackerPage />} />
         <Route path="mock-interview" element={<MockInterviewPage />} />
-        <Route path="upgrade" element={<UpgradePage />}>
-          <Route path="checkout" element={<CheckoutModalWrapper />} />
-        </Route>
       </Route>
 
       {/* --- Account Standalone Layout --- */}
@@ -95,6 +89,9 @@ const AppRoutes: React.FC = () => {
         <Route path="subscription/transactions/:transactionId" element={<TransactionDetailPage />} />
         <Route path="security" element={<Security />} />
         <Route path="edit" element={<EditProfile />} />
+        <Route path="upgrade" element={<AccountUpgradePage />}>
+          <Route path="checkout" element={null} />
+        </Route>
       </Route>
 
       {/* --- Catch-all Route (404) --- */}
@@ -108,14 +105,6 @@ type SubscriptionContextType = { subscriptionData: { expirationDate: string } };
 function CancelSubscriptionModalWrapper() {
   const { subscriptionData } = useOutletContext<SubscriptionContextType>();
   return <CancelSubscriptionModal subscriptionData={subscriptionData} />;
-}
-
-// Wrapper để lấy context từ Outlet và truyền vào CheckoutModal
-type CheckoutContextType = { checkoutData: Omit<CheckoutModalProps, 'isOpen' | 'onClose'>; onClose: () => void };
-function CheckoutModalWrapper() {
-  const { checkoutData, onClose } = useOutletContext<CheckoutContextType>();
-  if (!checkoutData) return null;
-  return <CheckoutModal isOpen={true} onClose={onClose} {...checkoutData} />;
 }
 
 export default AppRoutes;

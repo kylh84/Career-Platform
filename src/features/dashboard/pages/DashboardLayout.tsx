@@ -48,6 +48,7 @@ const sidebarMenu = [
 ];
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+  console.log('DashboardLayout mounted');
   const navigate = useNavigate();
   const location = useLocation();
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);

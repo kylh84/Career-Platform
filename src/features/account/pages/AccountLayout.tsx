@@ -54,7 +54,7 @@ const AccountLayout: React.FC = () => {
   };
 
   const handleUpgrade = () => {
-    navigate('/dashboard/upgrade');
+    navigate('/dashboard/account/upgrade');
   };
 
   const handleDashboard = () => {

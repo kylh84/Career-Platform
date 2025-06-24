@@ -1,12 +1,12 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import UpgradePage from '../../pages/UpgradePage';
+import AccountUpgradePage from '../AccountUpgradePage';
 
 describe('UpgradePage', () => {
   const renderComponent = () =>
     render(
       <BrowserRouter>
-        <UpgradePage />
+        <AccountUpgradePage />
       </BrowserRouter>
     );
 
