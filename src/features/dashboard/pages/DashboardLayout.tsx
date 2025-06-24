@@ -6,7 +6,7 @@ import PageSkeleton from '../../../components/skeletons/PageSkeleton';
 import SuspenseWithDelay from '../../../components/SuspenseWithDelay';
 import { FaIdCard, FaUserLarge, FaBriefcase, FaCode, FaMap, FaChevronDown, FaBars, FaCalendarCheck, FaComments } from 'react-icons/fa6';
 import { FaTimes } from 'react-icons/fa';
-import { VscCopilot } from 'react-icons/vsc';
+// import { VscCopilot } from 'react-icons/vsc';
 import { SiGoogleanalytics } from 'react-icons/si';
 
 // --- Prefetcher functions for lazy-loaded pages ---
@@ -42,7 +42,7 @@ const sidebarMenu = [
   { label: 'Career', path: 'career', icon: <FaBriefcase size={20} />, prefetch: prefetchCareer },
   { label: 'Mock Interview', path: 'mock-interview', icon: <FaComments size={20} />, prefetch: prefetchMockInterview },
   { label: 'Learning Tracker', path: 'learning-tracker', icon: <FaCalendarCheck size={20} />, prefetch: prefetchLearningTracker },
-  { label: 'AI Copilot', path: 'copilot', icon: <VscCopilot size={20} />, prefetch: prefetchCopilot },
+  { label: 'AI Copilot', path: 'copilot', prefetch: prefetchCopilot },
   { label: 'Insight', path: 'insight', icon: <SiGoogleanalytics size={20} />, prefetch: prefetchInsight },
   { label: 'Account', path: 'account/profile', icon: <FaUserLarge size={20} />, prefetch: prefetchAccountProfile },
 ];
