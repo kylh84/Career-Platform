@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { startTransition } from 'react';
 import { useAppSelector } from '../../../store';
 import { Button } from '../../../components/common';
 import { useNavigate } from 'react-router-dom';
@@ -47,10 +47,14 @@ const Profile: React.FC = () => {
         <Button variant="primary" onClick={() => navigate('/dashboard/account/edit')}>
           Edit
         </Button>
-        <Button variant="secondary" onClick={() => navigate('/dashboard')}>
-          Dashboard
-        </Button>
-        <Button variant="secondary" onClick={() => navigate('/dashboard/account/subscription')}>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            startTransition(() => {
+              navigate('/dashboard/account/subscription/manage');
+            });
+          }}
+        >
           Change Plan
         </Button>
         <Button variant="secondary" onClick={() => navigate('/dashboard/account/security')}>
