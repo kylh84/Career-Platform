@@ -40,7 +40,7 @@ const LoginForm: React.FC = () => {
 
     if (isAuthenticated && user) {
       toast.success(`Welcome, ${user.firstName || user.username}!`);
-      navigate('/home', { replace: true });
+      navigate('/dashboard', { replace: true });
     }
   }, [isAuthenticated, user, navigate, toast, isSubmitted]);
 

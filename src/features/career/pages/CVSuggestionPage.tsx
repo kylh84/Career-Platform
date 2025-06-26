@@ -38,12 +38,22 @@ const CVSuggestionPage: React.FC = () => {
         <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 md:mb-8 text-gray-900 text-left">CV Presentation Suggestions</h2>
         <form onSubmit={handleGenerate} className="bg-white rounded-lg sm:rounded-xl shadow border border-gray-200 w-full mb-4 sm:mb-6 p-4 sm:p-6">
           <div className="mb-4">
-            <label className="block font-medium mb-1 text-base sm:text-lg">Position</label>
-            <input className="w-full border rounded px-3 py-2 text-sm sm:text-base" value={position} onChange={(e) => setPosition(e.target.value)} placeholder="e.g. Software Engineer" />
-          </div>
-          <div className="mb-4 sm:mb-6">
-            <label className="block font-medium mb-1 text-base sm:text-lg">Skills, Experience, Education</label>
+            <label htmlFor="position-input" className="block font-medium mb-1 text-base sm:text-lg">
+              Position
+            </label>
+            <input
+              id="position-input"
+              className="w-full border rounded px-3 py-2 text-sm sm:text-base"
+              placeholder="e.g. Software Engineer"
+              value={position}
+              onChange={(e) => setPosition(e.target.value)}
+            />
+
+            <label htmlFor="skills-input" className="block font-medium mb-1 text-base sm:text-lg">
+              Skills, Experience, Education
+            </label>
             <textarea
+              id="skills-input"
               className="w-full border rounded px-3 py-2 text-sm sm:text-base"
               rows={3}
               value={skills}

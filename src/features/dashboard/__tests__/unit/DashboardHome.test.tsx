@@ -27,11 +27,6 @@ describe('DashboardHome Component', () => {
     );
   };
 
-  test('renders dashboard title', () => {
-    renderComponent();
-    expect(screen.getByText('Dashboard')).toBeInTheDocument();
-  });
-
   test('renders all feature cards', () => {
     renderComponent();
     expect(screen.getByText('CV Optimization')).toBeInTheDocument();

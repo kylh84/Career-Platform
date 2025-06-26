@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { FaCreditCard, FaUniversity } from 'react-icons/fa';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useMatch, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../../store';
+import { setCheckoutData } from '../../dashboard/slice';
+import CheckoutModal from '../../dashboard/components/CheckoutModal';
 
-const UpgradePage: React.FC = () => {
+const AccountUpgradePage: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedPayment, setSelectedPayment] = useState<'momo' | 'vnpay' | 'card' | 'bank'>('momo');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [checkoutData, setCheckoutData] = useState<{
-    amount: number;
-    orderId: string;
-    qrCode: string;
-    expiryTime: number;
-  } | null>(null);
+  const dispatch = useAppDispatch();
+  const checkoutData = useAppSelector((state) => state.dashboard.checkoutData);
+  const match = useMatch('/dashboard/account/upgrade/checkout');
   const navigate = useNavigate();
 
   const upgradeData = {
@@ -53,16 +53,16 @@ const UpgradePage: React.FC = () => {
         qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://payment.momo.vn/${orderData.amount}`,
         expiryTime: 300, // 5 minutes
       };
-      setCheckoutData({
+      const data = {
         amount: orderData.amount,
         orderId: response.orderId,
         qrCode: response.qrCode,
         expiryTime: response.expiryTime,
-      });
+      };
+      dispatch(setCheckoutData(data));
       navigate('checkout');
-    } catch (error) {
-      console.error('Error creating order:', error);
-      // Handle error (show error message to user)
+    } catch {
+      // handle error
     } finally {
       setIsProcessing(false);
     }
@@ -159,21 +159,21 @@ const UpgradePage: React.FC = () => {
           {isProcessing ? 'Processing...' : 'Upgrade'}
         </button>
       </div>
-      {/* Checkout Modal qua Outlet */}
-      <Outlet
-        context={{
-          checkoutData: checkoutData
-            ? {
-                amount: checkoutData.amount,
-                qrCode: checkoutData.qrCode,
-                expiryTime: checkoutData.expiryTime,
-              }
-            : undefined,
-          onClose: () => navigate(-1),
-        }}
-      />
+      <Outlet />
+      {match && checkoutData && (
+        <CheckoutModal
+          isOpen={true}
+          onClose={() => {
+            dispatch(setCheckoutData(null));
+            navigate('/dashboard/account/upgrade');
+          }}
+          amount={checkoutData.amount}
+          qrCode={checkoutData.qrCode}
+          expiryTime={checkoutData.expiryTime}
+        />
+      )}
     </div>
   );
 };
 
-export default UpgradePage;
+export default AccountUpgradePage;

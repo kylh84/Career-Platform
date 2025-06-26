@@ -1,22 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
-import { FaUser, FaCreditCard, FaShieldCat, FaArrowUpRightFromSquare, FaRightFromBracket, FaChevronDown, FaBars } from 'react-icons/fa6';
-import { FaTimes } from 'react-icons/fa';
-import { MdOutlineManageHistory } from 'react-icons/md';
-import { useAppSelector, useAppDispatch } from '../../../store';
+import React, { useState, useEffect, startTransition } from 'react';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { Button } from '../../../components/common';
 import { logout } from '../../../features/auth/slice';
-import { useNavigate } from 'react-router-dom';
+import { useAppSelector, useAppDispatch } from '../../../store';
+import { FaUser, FaCreditCard, FaShieldCat, FaArrowUpRightFromSquare, FaTableColumns, FaRightFromBracket, FaChevronDown, FaBars } from 'react-icons/fa6';
+import { FaTimes } from 'react-icons/fa';
+import { MdOutlineManageHistory } from 'react-icons/md';
+import PageSkeleton from '../../../components/skeletons/PageSkeleton';
+import SuspenseWithDelay from '../../../components/SuspenseWithDelay';
+
+// --- Prefetcher functions for lazy-loaded account pages ---
+const prefetchProfile = () => import('./Profile');
+const prefetchSubscription = () => import('./Subscription');
+const prefetchSecurity = () => import('./Security');
+const prefetchTransactions = () => import('./TransactionHistory');
 
 const accountMenu = [
-  { label: 'Profile', path: 'profile', icon: <FaUser size={20} /> },
+  { label: 'Profile', path: 'profile', icon: <FaUser size={20} />, prefetch: prefetchProfile },
   {
     label: 'Subscription',
     path: 'subscription/manage',
     icon: <FaCreditCard size={20} />,
-    submenu: [{ label: 'Transactions History', path: 'subscription/transactions', icon: <MdOutlineManageHistory size={20} /> }],
+    prefetch: prefetchSubscription,
+    submenu: [{ label: 'Transactions History', path: 'subscription/transactions', icon: <MdOutlineManageHistory size={20} />, prefetch: prefetchTransactions }],
   },
-  { label: 'Security', path: 'security', icon: <FaShieldCat size={20} /> },
+  { label: 'Security', path: 'security', icon: <FaShieldCat size={20} />, prefetch: prefetchSecurity },
 ];
 
 const AccountLayout: React.FC = () => {
@@ -40,11 +48,17 @@ const AccountLayout: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/home');
+    startTransition(() => {
+      navigate('/home');
+    });
   };
 
   const handleUpgrade = () => {
-    navigate('/dashboard/upgrade');
+    navigate('/dashboard/account/upgrade');
+  };
+
+  const handleDashboard = () => {
+    navigate('/dashboard');
   };
 
   const toggleSidebar = () => {
@@ -96,6 +110,7 @@ const AccountLayout: React.FC = () => {
                   {/* NavLink cho label Subscription */}
                   <NavLink
                     to={item.path}
+                    onMouseEnter={item.prefetch}
                     onClick={handleNavigation}
                     className={({ isActive }) =>
                       `flex items-center flex-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-all gap-2 sm:gap-3
@@ -114,6 +129,7 @@ const AccountLayout: React.FC = () => {
               ) : (
                 <NavLink
                   to={item.path}
+                  onMouseEnter={item.prefetch}
                   onClick={handleNavigation}
                   className={({ isActive }) =>
                     `flex items-center w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium transition-colors gap-2 sm:gap-3
@@ -135,6 +151,7 @@ const AccountLayout: React.FC = () => {
                       <NavLink
                         key={sub.label}
                         to={sub.path}
+                        onMouseEnter={sub.prefetch}
                         onClick={handleNavigation}
                         className={({ isActive }) =>
                           `flex items-center w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors gap-2
@@ -151,7 +168,10 @@ const AccountLayout: React.FC = () => {
             </div>
           ))}
           <div className=" flex flex-col gap-2 md:hidden">
-            <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center mt-6 gap-2 text-sm sm:text-base">
+            <Button onClick={handleDashboard} variant="primary" className="w-full flex items-center justify-center mt-6 gap-2 text-sm sm:text-base">
+              <FaTableColumns className="text-base sm:text-lg" /> Dashboard
+            </Button>
+            <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
               <FaArrowUpRightFromSquare className="text-base sm:text-lg" /> Upgrade
             </Button>
             <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
@@ -159,12 +179,15 @@ const AccountLayout: React.FC = () => {
             </Button>
           </div>
         </nav>
-        <div className="hidden md:block mt-6 space-y-3">
-          <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
-            <FaArrowUpRightFromSquare className="text-base sm:text-lg" /> Upgrade
+        <div className="hidden md:block mt-6 space-y-2.5">
+          <Button onClick={handleDashboard} variant="primary" className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm sm:text-base font-medium hover:bg-blue-600 transition-colors">
+            <FaTableColumns className="text-base" /> Dashboard
           </Button>
-          <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2 text-sm sm:text-base">
-            <FaRightFromBracket className="text-base sm:text-lg" /> Log out
+          <Button onClick={handleUpgrade} variant="primary" className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm sm:text-base font-medium hover:bg-blue-600 transition-colors">
+            <FaArrowUpRightFromSquare className="text-base" /> Upgrade
+          </Button>
+          <Button onClick={handleLogout} variant="light" className="w-full flex items-center justify-center gap-2.5 py-2.5 text-sm sm:text-base font-medium hover:bg-gray-400 transition-colors">
+            <FaRightFromBracket className="text-base" /> Log out
           </Button>
         </div>
       </aside>
@@ -177,7 +200,9 @@ const AccountLayout: React.FC = () => {
           pt-16 md:pt-0`}
       >
         <div className="p-4 sm:p-6 md:p-10">
-          <Outlet />
+          <SuspenseWithDelay fallback={<PageSkeleton />} minDuration={1000}>
+            <Outlet />
+          </SuspenseWithDelay>
         </div>
       </main>
     </div>

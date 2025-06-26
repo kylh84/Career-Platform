@@ -1,6 +1,11 @@
 // Add Jest setup code here
 import '@testing-library/jest-dom';
 
+// Mock scrollIntoView cho toàn bộ test
+beforeAll(() => {
+  window.HTMLElement.prototype.scrollIntoView = jest.fn();
+});
+
 // Mock localStorage
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
